@@ -13,7 +13,8 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  min-height: 100vh;
+  height: 100vh;      /* ✅ exact height */
+  overflow: hidden;   /* ✅ kills scrollbar */
 }
 
 /* Header */
@@ -24,10 +25,9 @@ body {
   flex: 1;
   display: flex;
   justify-content: center;
-  align-items: center;
   width: 100%;
   box-sizing: border-box;
-  padding-bottom: 30px; /* extra space for footer */
+  align-items: flex-start; /* ✅ align to top */
 }
 
 /* Footer */
@@ -211,7 +211,7 @@ body {
 </head>
 
 <body>
-<div style="width:100%; max-width:600px; margin:0 auto; padding:0 5px; min-height:100vh; display:flex; flex-direction:column;">  
+<div style="width:100%; max-width:600px; margin:0 auto; padding:0 5px; height:100%; display:flex; flex-direction:column;">  
 
 <!--<div class="header">
   <h1 style="margin-top:20px; letter-spacing:0.15em; font-weight:300; font-size:clamp(24px,6vw,48px); text-align:center;">
