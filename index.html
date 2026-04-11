@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>I know Math!</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body {
+  margin: 0;
+  background: #f4f6f8;
+  font-family: Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+}
+
+/* Header */
+.header { margin-top: 3vh; }
+
+/* Main content */
+#main-content {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  box-sizing: border-box;
+  padding-bottom: 30px; /* extra space for footer */
+}
+
+/* Footer */
+.footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.footer-logo {
+  max-width: 80%;
+  height: auto;
+  margin-top: 3px;
+  object-fit: contain;
+  opacity: 0.9;
+}
+
+/* ================= GAME ================= */
+.screen {
+  width: 100%;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+}
+.screen.active { display: flex; }
+
+/* Game screen */
+.game-header {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr; /* left | center | right */
+  align-items: center;
+  padding: 10px 12px;
+  box-sizing: border-box;
+
+  background: #eef2f5; /* subtle top bar color */
+  border: 1px solid #d0d7de;
+  border-radius: 10px;
+  margin-bottom: 8px;
+}
+
+.game-area {
+  width: 100%;
+  height: 55vh;
+  background: #eef2f5;
+  border: 2px solid #ccc;
+  position: relative;
+  overflow: hidden;
+}
+
+.floor {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 10px;
+  background: #8b5a2b; /* brownish */
+}
+
+.equation-box {
+  border: 1px solid #aaa;
+  border-radius: 8px;
+  padding: 6px 12px;
+  background: #fff8b0; /* light yellow */
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.controls {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.ops { display: flex; flex-wrap: wrap; }
+
+.op-btn {
+  padding: 10px 16px;
+  margin: 6px;
+  border: none;
+  border-radius: 8px;
+  background: #333;
+  color: white;
+  font-size: 16px;
+}
+
+.op-btn.active { background: #007bff; }
+
+.start-btn {
+  margin-top: 0;
+  padding: 10px 20px;
+  font-size: 16px;
+  border: 1px solid #aaa;
+  border-radius: 6px;
+  background-color: #90ee90;
+  cursor: pointer;
+}
+.start-btn:active { background-color: #7edc7e; }
+
+.answer-btn {
+  position: absolute;
+  top: 0;
+  padding: 10px 16px;
+  border-radius: 8px;
+  border: 1px solid #aaa;
+  background: #fff8b0; /*#f0f8ff;*/
+  cursor: pointer;
+  font-size: 18px;
+  min-width: 50px;
+  text-align: center;
+}
+.answer-btn:active { background: #e0f0ff; }
+.answer-btn.correct { background: #90ee90 !important; color: #000; }
+.answer-btn.crash { background: red !important; color: white; }
+
+.correct-animation {
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) scale(2);
+  transition: transform 0.5s ease;
+  z-index: 999;
+}
+
+/* Level Dialog */
+#levelDialog {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+<--#levelDialog .dialog-box {
+  background: #fff;
+  padding: 20px 30px;
+  border-radius: 12px;
+  text-align: center;
+  max-width: 300px;
+}
+#levelDialog .dialog-box button {
+  margin: 5px;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  background: #90ee90;
+}-->
+
+#levelDialog .dialog-box {
+  background: #fff;
+  padding: 35px 40px;
+  border-radius: 12px;
+  text-align: center;
+  width: 90%;
+  max-width: 420px;   /* bigger dialog */
+  font-size: 18px;    /* slightly larger text */
+}
+
+#levelDialog .dialog-box button {
+  margin: 8px;
+  padding: 10px 18px;
+  font-size: 16px;
+}
+
+#levelDialog .dialog-box p {
+  font-size: 22px;
+  line-height: 1.6;
+  margin-bottom: 20px;
+  font-weight: bold;
+}
+
+#levelDialog .dialog-box button.next { background: #007bff; color: #fff; }
+</style>
+</head>
+
+<body>
+<div style="width:100%; max-width:600px; margin:0 auto; padding:0 5px; min-height:100vh; display:flex; flex-direction:column;">  
+
+<div class="header">
+  <h1 style="margin-top:20px; letter-spacing:0.15em; font-weight:300; font-size:clamp(24px,6vw,48px); text-align:center;">
+    I <span style="font-weight:600;">Know Math!</span>
+  </h1>
+</div>
+
+<div id="main-content">
+  <div id="gameScreen" class="screen active">
+    <div class="game-header">
+
+        <!-- LEFT (level + correct counter) -->
+        <div style="justify-self: start; display:flex; gap:18px; align-items:center;">
+          <div><b>Level:</b> <span id="levelCounter">1</span></div>
+          <div>✅ <span id="goodScore">0</span>/<span id="levelTotal">10</span></div>
+        </div>
+
+      <!-- CENTER (equation stays perfectly centered) -->
+      <div id="equation" class="equation-box" style="justify-self: center;">
+        X + Y = ?
+      </div>
+
+      <!-- RIGHT (scores) -->
+      <div style="display:flex; align-items:center; gap:24px; justify-self:end;">
+        <div>❌ <span id="badScore">0</span></div>
+      </div>
+
+    </div>
+
+    <div class="game-area" id="gameArea">
+      <div id="answersContainer" style="position:absolute; top:0; left:0; width:100%; height:100%;"></div>
+      <div class="floor"></div>
+    </div>
+
+    <div class="controls">
+      <div class="ops">
+        <button class="op-btn" data-op="+">+</button>
+        <button class="op-btn" data-op="-">-</button>
+        <button class="op-btn" data-op="*">*</button>
+        <button class="op-btn" data-op="/">/</button>
+        <button class="op-btn" data-op="mix">Mix</button>
+      </div>
+
+      <button class="start-btn" id="startBtn">Start</button>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  <p>Created by <b style="color:red;">RedPil</b> & 🤖</p>
+  <a href="https://redpil.weebly.com" target="_blank">
+    <img src="https://12877123-740428873139310021.preview.editmysite.com/uploads/1/2/8/7/12877123/red-elephant-in-sunglasses_orig.png" 
+         alt="Logo" 
+         class="footer-logo"
+         style="display:block; margin:10px auto; width:80px;">
+  </a>
+</div>
+</div>
+
+<!-- Level Dialog -->
+<div id="levelDialog">
+  <div class="dialog-box">
+    <p id="levelText"></p>
+    <button id="restartLevelBtn">Restart Level</button>
+    <button id="nextLevelBtn" class="next">Next Level</button>
+  </div>
+</div>
+
+<audio id="wrong-click-sound" src="https://actions.google.com/sounds/v1/cartoon/cartoon_boing.ogg" preload="auto"></audio>
+<audio id="correct-click-sound" src="https://cdn.freesound.org/previews/351/351566_2398403-lq.ogg" preload="auto"></audio>
+<audio id="wrong-crash-sound" src="https://actions.google.com/sounds/v1/impacts/dumpster_bottle_smash.ogg" preload="auto"></audio>
+<audio id="correct-crash-sound" src="https://actions.google.com/sounds/v1/impacts/crash.ogg" preload="auto"></audio>
+<audio id="lost-sound" src="https://cdn.freesound.org/previews/240/240195_2953000-lq.ogg" preload="auto"></audio>
+<audio id="win-sound" src="https://cdn.freesound.org/previews/646/646114_14161761-lq.ogg" preload="auto"></audio>
+
+<script>
+// ===== STATE =====
+let selectedOp = '+';
+let currentAnswer = null;
+let fallingAnswers = [];
+let animationId = null;
+
+let goodScore = 0;
+let badScore = 0;
+
+// ===== LEVELS =====
+let currentLevel = 1;
+let equationCount = 0;
+let levelGood = 0;
+let levelBad = 0;
+const maxEquations = 10;
+const maxWrong = 3;
+
+const levelCounter = document.getElementById('levelCounter');
+
+// whenever level starts or increments
+levelCounter.innerText = currentLevel;
+document.getElementById('levelTotal').innerText = maxEquations;
+
+
+// ===== ELEMENTS =====
+const opButtons = document.querySelectorAll('.op-btn');
+const startBtn = document.getElementById('startBtn');
+const levelDialog = document.getElementById('levelDialog');
+const levelText = document.getElementById('levelText');
+const restartLevelBtn = document.getElementById('restartLevelBtn');
+const nextLevelBtn = document.getElementById('nextLevelBtn');
+let audioUnlocked = false;
+
+// ===== EXIT BUTTON =====
+const exitBtn = document.createElement('button');
+exitBtn.innerText = 'Exit';
+exitBtn.style.background='#ff5555';
+exitBtn.style.color='white';
+exitBtn.style.border='none';
+exitBtn.style.borderRadius='6px';
+exitBtn.style.margin='5px';
+exitBtn.style.padding='8px 16px';
+levelDialog.querySelector('.dialog-box').appendChild(exitBtn);
+
+exitBtn.addEventListener('click',()=>{
+  levelDialog.style.display='none';
+  goodScore=0; badScore=0;
+  document.getElementById('goodScore').innerText=goodScore;
+  document.getElementById('badScore').innerText=badScore;
+  document.getElementById('equation').innerText='X + Y = ?';
+  startBtn.innerText='Start';
+  fallingAnswers.forEach(fa=>fa.el.remove());
+  fallingAnswers=[];
+  if(animationId){ cancelAnimationFrame(animationId); animationId=null; }
+});
+
+// ===== INIT =====
+document.querySelector('[data-op="+"]').classList.add('active');
+
+opButtons.forEach(btn => {
+  btn.addEventListener('click', () => {
+    opButtons.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    selectedOp = btn.dataset.op === 'mix' ? 'mix' : btn.dataset.op;
+  });
+});
+
+// ===== RANDOM =====
+function randFloat(min,max){return Math.random()*(max-min)+min;}
+function randInt(min,max){return Math.floor(Math.random()*(max-min+1))+min;}
+
+// ===== EQUATIONS =====
+function generateEquation() {
+  let op = selectedOp;
+  if(op==='mix'){const ops=['+','-','*','/']; op=ops[randInt(0,3)];}
+
+  let a,b,result;
+  switch(op){
+    case '+': a=randInt(0,10); b=randInt(0,10); result=a+b; break;
+    case '-': a=randInt(0,10); b=randInt(0,a); result=a-b; break;
+    case '*': a=randInt(0,10); b=randInt(0,10); result=a*b; break;
+    case '/': b=randInt(1,10); result=randInt(0,10); a=b*result; break;
+  }
+  currentAnswer=result;
+  document.getElementById('equation').innerText=`${a} ${op} ${b} = ?`;
+}
+
+// ===== ANSWERS =====
+function generateAnswers() {
+  const container=document.getElementById('answersContainer');
+  container.innerHTML='';
+  fallingAnswers=[];
+
+  let answers=[currentAnswer];
+  while(answers.length<4){
+    let wrong=currentAnswer+randInt(-5,5);
+    if(wrong!==currentAnswer&&!answers.includes(wrong)) answers.push(wrong);
+  }
+  answers.sort(()=>Math.random()-0.5);
+  const areaWidth=container.clientWidth;
+
+  answers.forEach(ans=>{
+    const btn=document.createElement('button');
+    btn.innerText=ans;
+    btn.className='answer-btn';
+    btn.style.left=randInt(0,areaWidth-60)+'px';
+    btn.style.top='-40px';
+    btn.addEventListener('click',()=>handleFallingClick(ans,btn));
+    container.appendChild(btn);
+    fallingAnswers.push({value:ans,el:btn,y:-40,speed:Math.max(0.3,randFloat(0.4,1.2)),frozen:false});
+  });
+
+  if(!animationId) animateAnswers();
+}
+
+// ===== ANIMATION =====
+function animateAnswers(){
+  const gameArea=document.getElementById('gameArea');
+  const floorY=gameArea.clientHeight-10;
+  animationId=requestAnimationFrame(animateAnswers);
+
+  for(let i=fallingAnswers.length-1;i>=0;i--){
+    const fa=fallingAnswers[i];
+    if(!fa.frozen){ fa.y+=fa.speed; fa.el.style.top=fa.y+'px'; }
+
+    if(!fa.frozen && fa.y+fa.el.offsetHeight>=floorY){
+      if(fa.value===currentAnswer) {
+        playSound('correct-crash-sound');
+        badScore++;
+        levelBad++;
+        document.getElementById('badScore').innerText = badScore;
+        resolveAnswer(fa,true,false);
+        if (levelBad >= maxWrong) showLevelDialog(); 
+      }
+      else {
+        playSound('wrong-crash-sound');
+        resolveAnswer(fa,false);
+      }
+    }
+  }
+
+  if(fallingAnswers.length===0){ cancelAnimationFrame(animationId); animationId=null; }
+}
+
+// ===== CLICK =====
+function handleFallingClick(selected,btnElement){
+  const fa=fallingAnswers.find(f=>f.el===btnElement);
+  if(!fa) return;
+
+    fa.frozen = true; // ⭐ prevent crash detection in animation loop
+
+  if(selected===currentAnswer){
+    goodScore++; levelGood++;
+    document.getElementById('goodScore').innerText=goodScore;
+    resolveAnswer(fa,true,true);
+  } else{
+    badScore++; levelBad++;
+    document.getElementById('badScore').innerText=badScore;
+    resolveAnswer(fa,false, true);
+    if(levelBad>=maxWrong) showLevelDialog(); // ✅ immediate end on 3 wrong
+  }
+}
+
+function resolveAnswer(fa,isCorrect,fromClick=false){
+  const el=fa.el;
+  const idx=fallingAnswers.indexOf(fa);
+  if(idx!==-1) fallingAnswers.splice(idx,1);
+
+  if(!isCorrect){
+    if(fromClick) playSound('wrong-click-sound');
+    el.classList.add('crash');
+    setTimeout(()=>el.remove(),120);
+  } else{
+    el.style.background='#90ee90'; el.style.color='#000'; el.style.borderColor='#0a0';
+    fallingAnswers.forEach(f=>{if(f.el!==el) f.el.remove();});
+    fallingAnswers=[fa];
+
+    if(fromClick){
+      el.classList.add('correct-animation');
+      playSound('correct-click-sound');
+      //const sound=document.getElementById('happySound');
+      //if(sound){ sound.currentTime=0; sound.play(); }
+    } else{
+      fa.frozen=true;
+      el.style.transformOrigin='bottom center';
+      el.style.transform='scale(2)';
+      el.style.transition='transform 0.5s ease';
+    }
+
+    setTimeout(()=>{
+      el.remove();
+      fallingAnswers=[];
+      if(levelBad<maxWrong) nextEquationOrLevel();
+    },1000);
+  }
+}
+
+function playSound(sound_id) {
+  const theSound = document.getElementById(sound_id);
+
+  // Unlock audio on first click
+  if(!audioUnlocked) {
+    theSound.play().catch(()=>{}); // plays silently to unlock
+    audioUnlocked = true;
+  }
+
+  theSound.currentTime = 0;
+  theSound.play().catch(()=>{}); // play sound safely
+}
+
+// ===== LEVEL HANDLING =====
+function nextEquationOrLevel(){
+  equationCount++;
+  if(equationCount>=maxEquations || levelBad>=maxWrong){
+    showLevelDialog();
+  } else{
+    generateEquation();
+    generateAnswers();
+  }
+}
+
+function showLevelDialog(){
+  // remove all falling answers immediately
+  fallingAnswers.forEach(fa => fa.el.remove());
+  fallingAnswers = [];
+
+  playSound(levelGood===maxEquations?'win-sound':'lost-sound')
+
+    levelText.innerHTML=`Level ${currentLevel} completed!<br>
+    <span style="color:green;">✅ Correct: ${levelGood}</span><br>
+    <span style="color:red;">❌ Wrong: ${levelBad}</span>`;
+  
+  restartLevelBtn.style.display='inline-block';
+  nextLevelBtn.style.display=levelGood===maxEquations?'inline-block':'none';
+  levelDialog.style.display='flex';
+}
+
+restartLevelBtn.addEventListener('click',()=>{
+  levelDialog.style.display='none';
+  goodScore=0; badScore=0;
+  document.getElementById('goodScore').innerText=goodScore;
+  document.getElementById('badScore').innerText=badScore;
+  startLevel(currentLevel);
+});
+
+nextLevelBtn.addEventListener('click',()=>{
+  levelDialog.style.display='none';
+  currentLevel++;
+  startLevel(currentLevel);
+});
+
+function startLevel(level){
+  equationCount=0; levelGood=0; levelBad=0;
+  generateEquation();
+  generateAnswers();
+}
+
+// ===== START GAME =====
+startBtn.addEventListener('click',()=>{
+  startBtn.innerText='Restart';
+  currentLevel=1;
+  goodScore=0; badScore=0;
+  document.getElementById('goodScore').innerText=goodScore;
+  document.getElementById('badScore').innerText=badScore;
+  fallingAnswers.forEach(fa=>fa.el.remove());
+  fallingAnswers=[];
+  if(animationId){ cancelAnimationFrame(animationId); animationId=null; }
+  startLevel(currentLevel);
+});
+</script>
+</body>
+</html>
