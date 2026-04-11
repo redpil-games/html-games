@@ -28,6 +28,7 @@ body {
   width: 100%;
   box-sizing: border-box;
   align-items: flex-start; /* ✅ align to top */
+  flex-direction: column;
 }
 
 /* Footer */
@@ -72,11 +73,13 @@ body {
 
 .game-area {
   width: 100%;
-  height: 55vh;
+  /*height: 55vh;*/
   background: #eef2f5;
   border: 2px solid #ccc;
   position: relative;
   overflow: hidden;
+  flex: 1;              /* ✅ fills remaining space */
+  height: auto;         /* ❌ remove 55vh */
 }
 
 .floor {
