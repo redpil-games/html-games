@@ -20,15 +20,14 @@ body {
 /* Header */
 .header { margin-top: 3vh; }
 
-/* Main content */
 #main-content {
   flex: 1;
   display: flex;
-  justify-content: center;
+  flex-direction: column;   /* ✅ ADD THIS */
+  justify-content: flex-start;
+  align-items: stretch;     /* ✅ CHANGE THIS */
   width: 100%;
   box-sizing: border-box;
-  align-items: flex-start; /* ✅ align to top */
-  flex-direction: column;
 }
 
 /* Footer */
@@ -54,7 +53,11 @@ body {
   flex-direction: column;
   align-items: center;
 }
-.screen.active { display: flex; }
+.screen.active {
+  display: flex;
+  flex-direction: column;
+  flex: 1;   /* ✅ CRITICAL */
+}
 
 /* Game screen */
 .game-header {
@@ -71,15 +74,15 @@ body {
   margin-bottom: 8px;
 }
 
+
 .game-area {
   width: 100%;
-  /*height: 55vh;*/
+  flex: 1;        /* ✅ fills remaining space */
+  min-height: 0;  /* ✅ prevents flex overflow bug */
   background: #eef2f5;
   border: 2px solid #ccc;
   position: relative;
   overflow: hidden;
-  flex: 1;              /* ✅ fills remaining space */
-  height: auto;         /* ❌ remove 55vh */
 }
 
 .floor {
