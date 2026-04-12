@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Match Me</title>
+<style>
+body {
+  margin: 0;
+  background: #f4f6f8;
+  font-family: Arial, sans-serif;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  min-height: 100vh; /* ✅ instead of height */
+}
+
+  /* Start & Game screens */
+  .screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+
+#game-screen {
+  position: relative;
+}
+
+  .hidden {
+    display: none !important; /* force hide */
+  }
+
+h1 {
+  margin-top: 5vh;
+  margin-bottom: 2vh;
+}
+
+  .selector {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: center;
+  }
+
+  select, button {
+    padding: 8px 12px;
+    font-size: 16px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+  }
+
+  button {
+    cursor: pointer;
+    background: #4a90e2;
+    color: white;
+    border: none;
+  }
+
+  button:hover {
+    background: #357abd;
+  }
+
+  .footer {
+    margin-top: 20px;
+    font-size: 14px;
+    color: #666;
+  }
+
+  /* Game board */
+.game-board {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* ✅ flexible */
+  gap: 10px;
+  padding: 10px;
+  width: 100%;
+  max-width: 400px; /* keeps desktop nice */
+}
+
+.card {
+  width: 100%;
+  aspect-ratio: 1 / 1; /* ✅ perfect squares */
+  perspective: 1000px;
+  cursor: pointer;
+}
+
+@media (max-width: 480px) {
+  .game-board {
+    gap: 8px;
+    padding: 8px;
+  }
+}
+
+  .card.disabled {
+    pointer-events: none;
+    opacity: 0.5;
+  }
+
+  .card-inner {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.4s ease;
+  }
+
+  .card.flipped .card-inner {
+    transform: rotateY(180deg);
+  }
+
+  .card-face {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    border-radius: 12px;
+  }
+
+  .card-front {
+    background: #4a90e2;
+    border: 2px solid #ffffff;
+  }
+
+  .card-back {
+    background: #ffffff;
+    border: 2px solid #ccc;
+    transform: rotateY(180deg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Pop animation for matches */
+  @keyframes pop {
+    0%   { transform: scale(1); }
+    50%  { transform: scale(1.15); }
+    100% { transform: scale(1); }
+  }
+
+  .card.pop .card-inner {
+    animation: pop 0.3s ease;
+  }
+  
+.game-controls {
+  display: flex;
+  gap: 12px;
+}
+
+.game-controls button {
+  padding: 6px 12px;
+  font-size: 14px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  cursor: pointer;
+  background: #4a90e2;
+  color: white;
+}
+
+.game-controls button:hover {
+  background: #357abd;
+}
+  
+.selector-row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.selector-row select {
+  padding: 8px 12px;
+  font-size: 16px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+.selector-row button {
+  padding: 8px 12px;
+  font-size: 16px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  background: #4a90e2;
+  color: white;
+}
+
+.selector-row button:hover {
+  background: #357abd;
+}
+
+.selector-row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.button-style {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid #4a90e2;
+  <--background: #4a90e2;-->
+  color: black;
+  font-size: 14px;
+  font-weight: bold;
+  text-align: center;
+  cursor: default; /* not clickable */
+  margin-left: 6px;
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.overlay-content {
+  background: white;
+  padding: 20px 30px;
+  border-radius: 12px;
+  text-align: center;
+  border: 2px solid #ccc;
+}
+
+.overlay-content h2 {
+  margin: 0 0 15px 0;
+}
+
+.overlay-content button {
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: none;
+  background: #4a90e2;
+  color: white;
+  cursor: pointer;
+}
+
+.overlay-content button:hover {
+  background: #357abd;
+}
+
+body {
+  margin: 0;
+  background: #f4f6f8;
+  font-family: Arial, sans-serif;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100vh;
+}
+
+/* Header */
+.header {
+  margin-top: 6vh;
+}
+
+/* Main content grows */
+#main-content {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;            /* ✅ ADD */
+}
+
+/* Footer */
+<--.footer {
+  margin-bottom: 6vh;
+  font-size: 14px;
+  color: #666;
+}-->
+
+.footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.footer-logo {
+  max-width: 80%;     /* keeps it smaller than typical line width */
+  height: auto;
+  margin-top: 3px;    /* space below text */
+  object-fit: contain;
+  opacity: 0.9;
+}
+
+</style>
+</head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<body>
+  <div style="
+  max-width:600px;
+  margin:0 auto;
+  padding:0 10px;
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+">  
+  <!-- Header (always visible) -->
+  <div class="header">
+    <h1 style="
+      margin-top:20px;
+      letter-spacing:0.15em;
+      font-weight:300;
+      font-size: clamp(24px, 6vw, 48px);
+      text-align:center;
+    ">
+      MATCH <span style="font-weight:600;">ME</span>
+    </h1>
+  </div>
+
+  <!-- Main content (changes) -->
+  <div id="main-content">
+    
+    <!-- Start Screen -->
+    <div id="start-screen" class="screen">
+      <div class="selector-row">
+        <select id="theme-select">
+          <option value="animals">🐶 Animals</option>
+          <option value="fruits">🍎 Fruits</option>
+          <option value="transportation">🚗 Transportation</option>
+          <option value="smileys">😀 Smileys</option>
+          <option value="sports">⚽ Sports</option>
+        </select>
+        <button id="start-btn" style="background-color: green;" >Start Game</button>
+      </div>
+
+      <p id="best-score" class="button-style">Best: -</p>
+    </div>
+
+    <!-- Game Screen -->
+    <div id="game-screen" class="screen hidden" >
+      <div class="game-controls">
+        <button id="restart-btn" style="background-color: green;">Restart</button>
+        <button id="back-btn" style="background-color: red;">Back to Menu</button>
+        <span id="tries-counter" class="button-style">Tries: 0</span>
+      </div>
+
+      <div class="game-board" id="board"></div>
+
+      <!-- End overlay -->
+      <div id="end-overlay" class="overlay hidden">
+        <div class="overlay-content">
+          <h2 id="end-message"></h2>
+          <button id="play-again-btn">Play Again</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Footer (always visible) -->
+    <div class="footer">
+      <p>Created by <b style="color:red;">RedPil</b> & 🤖</p>
+      <a href="https://redpil.weebly.com" title="Visit my site 🚀" target="_blank">
+        <img src="https://chatgpt.com/backend-api/estuary/public_content/enc/eyJpZCI6Im1fNjlkMDEyMjc0M2Y0ODE5MTlkYjAxNWRmMTk0ZmFjZmM6ZmlsZV8wMDAwMDAwMGIyNDQ3MjBhOWFhOWNiMzRjMzA4YTc1NiIsInRzIjoiMjA1NDYiLCJwIjoicHlpIiwiY2lkIjoiMSIsInNpZyI6IjliOTdjNzdiMWNmNGM0OTQ5M2M3OGRmYjA1Njc4OWY4ZmM4MDg5N2U5YzgyYmUwMWMwYjkwMmM3ZWY4YzE4NzQiLCJ2IjoiMCIsImdpem1vX2lkIjpudWxsLCJjcyI6bnVsbCwiY2RuIjpudWxsLCJjcCI6bnVsbCwibWEiOm51bGx9" alt="Logo" class="footer-logo" style="display:block; margin:10px auto; width:80px; cursor:pointer;">
+      </a>
+    </div>
+
+<script>
+const GRID_SIZE = 4; // 4x4 grid
+const MISMATCH_DELAY = 1300; // time before flipping back mismatched cards
+
+let cards = [];
+let flippedCards = [];
+let lockBoard = false;
+
+// Track tries
+let tries = 0;
+
+// Keep best scores per theme
+let bestScores = JSON.parse(localStorage.getItem("memoryBestScores")) || {};
+
+let CURRENT_THEME = "animals";
+
+const THEMES = {
+  animals: [
+    "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f436.png",
+    "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f431.png",
+    "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f981.png",
+    "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f42d.png",
+    "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f438.png",
+    "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f42f.png",
+    "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f430.png",
+    "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f43c.png"
+  ],
+  fruits: [
+    "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f34e.png",
+    "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f34c.png",
+    "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f347.png",
+    "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f352.png",
+    "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f34a.png",
+    "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f349.png",
+    "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f353.png",
+    "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f965.png"
+  ],
+  transportation: [
+    "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f697.png", // car
+    "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f68c.png", // bus
+    "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f699.png", // taxi
+    "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f68b.png", // tram
+    "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f6a2.png", // ship
+    "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f680.png", // rocket
+    "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f69a.png", // delivery truck
+    "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f683.png"  // train
+  ],
+  smileys: [
+    "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f600.png",
+    "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f610.png",
+    "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f615.png",
+    "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f620.png",
+    "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f624.png",
+    "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f627.png",
+    "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f634.png",
+    "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f637.png"
+  ],
+  sports: [
+    "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/26bd.png", // soccer
+    "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/26be.png", // baseball
+    "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f3c0.png", // basketball
+    "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f3c8.png", // football
+    "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f3d0.png", // volleyball
+    "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f3c9.png", // rugby
+    "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f94e.png", // ice hockey
+    "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f3be.png"  // tennis
+  ]
+};
+
+// Restart current game
+document.getElementById("restart-btn").addEventListener("click", () => {
+  initGame();
+});
+
+// Back to menu
+document.getElementById("back-btn").addEventListener("click", () => {
+  document.getElementById("game-screen").classList.add("hidden");
+  document.getElementById("start-screen").classList.remove("hidden");
+});
+
+/*// Start button logic
+document.getElementById("start-btn").addEventListener("click", () => {
+  const selectedTheme = document.getElementById("theme-select").value;
+  CURRENT_THEME = selectedTheme;
+
+  document.getElementById("start-screen").classList.add("hidden");
+  document.getElementById("game-screen").classList.remove("hidden");
+
+  initGame();
+});*/
+
+// Start button logic
+const startGame = () => {
+  const startScreen = document.getElementById("start-screen");
+  const gameScreen = document.getElementById("game-screen");
+
+  // Do nothing if game screen already visible
+  if (!startScreen.classList.contains("hidden")) {
+    CURRENT_THEME = document.getElementById("theme-select").value;
+
+    startScreen.classList.add("hidden");
+    gameScreen.classList.remove("hidden");
+
+    initGame();
+  }
+};
+
+// Start on button click
+document.getElementById("start-btn").addEventListener("click", startGame);
+
+// Auto-start on dropdown change
+//document.getElementById("theme-select").addEventListener("change", startGame);
+document.getElementById("theme-select").addEventListener("change", () => {
+  CURRENT_THEME = document.getElementById("theme-select").value;
+  updateBestDisplay();
+});
+
+document.getElementById("play-again-btn").addEventListener("click", () => {
+  document.getElementById("end-overlay").classList.add("hidden");
+  initGame();
+});
+
+function updateBestDisplay() {
+  const bestSpan = document.getElementById("best-score");
+  if(bestSpan){
+    const best = bestScores[CURRENT_THEME] ?? "-";
+    bestSpan.textContent = `Best: ${best}`;
+  }
+}
+
+// Initialize game
+function initGame() {
+  const board = document.getElementById("board");
+  board.innerHTML = "";
+  cards = [];
+  flippedCards = [];
+  lockBoard = false;
+  tries = 0;
+  updateTriesDisplay();
+
+  let selected = THEMES[CURRENT_THEME].slice(0, (GRID_SIZE*GRID_SIZE)/2);
+  let cardValues = [...selected, ...selected];
+  shuffle(cardValues);
+
+  cardValues.forEach((value,index) => {
+    const card = createCard(value,index);
+    board.appendChild(card);
+    cards.push(card);
+  });
+
+  // Update best score display on start screen
+  updateBestDisplay();
+}
+
+// Update tries display
+function updateTriesDisplay() {
+  const triesSpan = document.getElementById("tries-counter");
+  if(triesSpan) triesSpan.textContent = `Tries: ${tries}`;
+}
+
+// Update best score display
+function updateBestDisplay() {
+  const bestSpan = document.getElementById("best-score");
+  if(bestSpan){
+    const best = bestScores[CURRENT_THEME] ?? "-";
+    bestSpan.textContent = `Best: ${best}`;
+  }
+}
+
+function createCard(value, index) {
+  const card = document.createElement("div");
+  card.classList.add("card");
+  card.dataset.value = value;
+  card.dataset.index = index;
+
+  const inner = document.createElement("div");
+  inner.classList.add("card-inner");
+
+  const front = document.createElement("div");
+  front.classList.add("card-face", "card-front");
+
+  const back = document.createElement("div");
+  back.classList.add("card-face", "card-back");
+  const img = document.createElement("img");
+  img.src = value;
+  img.style.width = "70%";
+  img.style.height = "70%";
+  img.style.objectFit = "contain";
+  back.appendChild(img);
+
+  inner.appendChild(front);
+  inner.appendChild(back);
+  card.appendChild(inner);
+
+  card.addEventListener("click", () => handleCardClick(card));
+
+  return card;
+}
+
+let audioUnlocked = false;
+
+function handleCardClick(card) {
+  if(lockBoard || card.classList.contains("flipped")) return;
+
+  /*const flipSound = document.getElementById("flip-sound");
+
+  // Unlock audio on first click
+  if(!audioUnlocked) {
+    flipSound.play().catch(()=>{}); // plays silently to unlock
+    audioUnlocked = true;
+  }
+
+  flipSound.currentTime = 0;
+  flipSound.play().catch(()=>{}); // play sound safely*/
+
+  playSound("flip-sound");
+  card.classList.add("flipped");
+  flippedCards.push(card);
+
+  if(flippedCards.length === 2) checkMatch();
+}
+
+function playSound(sound_id) {
+  const theSound = document.getElementById(sound_id);
+
+  // Unlock audio on first click
+  if(!audioUnlocked) {
+    theSound.play().catch(()=>{}); // plays silently to unlock
+    audioUnlocked = true;
+  }
+
+  theSound.currentTime = 0;
+  theSound.play().catch(()=>{}); // play sound safely
+}
+
+/*function checkMatch() {
+  lockBoard = true;
+  const [card1, card2] = flippedCards;
+
+  if (card1.dataset.value === card2.dataset.value) {
+    card1.classList.add("pop");
+    card2.classList.add("pop");
+
+    setTimeout(() => {
+      card1.classList.add("disabled");
+      card2.classList.add("disabled");
+      card1.classList.remove("pop");
+      card2.classList.remove("pop");
+      resetTurn();
+      checkWin();
+    }, 300);
+  } else {
+    setTimeout(() => {
+      card1.classList.remove("flipped");
+      card2.classList.remove("flipped");
+      resetTurn();
+    }, MISMATCH_DELAY);
+  }
+}*/
+
+// Check match & increment tries
+function checkMatch() {
+  lockBoard = true;
+  tries++; // increment tries on every pair flip
+  updateTriesDisplay();
+
+  const [c1,c2] = flippedCards;
+  if(c1.dataset.value === c2.dataset.value){
+    c1.classList.add("pop"); c2.classList.add("pop");
+    setTimeout(() => {
+      c1.classList.add("disabled"); c2.classList.add("disabled");
+      c1.classList.remove("pop"); c2.classList.remove("pop");
+      resetTurn(); checkWin();
+      //playSound("match-sound");
+    }, 300);
+  } else {
+    setTimeout(() => { c1.classList.remove("flipped"); c2.classList.remove("flipped"); resetTurn(); }, MISMATCH_DELAY);
+  }
+}
+
+
+function resetTurn() {
+  flippedCards = [];
+  lockBoard = false;
+}
+
+function shuffle(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+}
+
+// Update best score on win
+function checkWin(){
+  if(cards.every(c=>c.classList.contains("disabled"))){
+
+    // Update best score
+    if(!bestScores[CURRENT_THEME] || tries < bestScores[CURRENT_THEME]){
+      bestScores[CURRENT_THEME] = tries;
+
+      // Save to localStorage
+      localStorage.setItem("memoryBestScores", JSON.stringify(bestScores));
+    }
+
+    const overlay = document.getElementById("end-overlay");
+    const message = document.getElementById("end-message");
+
+    message.textContent = `🎉 You won in ${tries} tries!`;
+    overlay.classList.remove("hidden");
+
+    updateBestDisplay();
+  }
+}
+
+updateBestDisplay();
+</script>
+
+<audio id="flip-sound" src="https://actions.google.com/sounds/v1/doors/deadbolt_lock.ogg" preload="auto"></audio>
+<audio id="match-sound" src="https://actions.google.com/sounds/v1/cartoon/cartoon_cowbell.ogg" preload="auto"></audio></div>
+</body>
+</html>
