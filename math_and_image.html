@@ -492,6 +492,9 @@
     const imgElement = document.getElementById('gameImage');
     imgElement.src = currentItem.image;
 
+    // Make sure the equation section is visible for the new round
+    document.getElementById('middleSection').style.display = 'flex';
+
     const gridSize = getGridDimensions(revealedImagesCount);
     totalTilesInRound = gridSize * gridSize;
 
@@ -513,7 +516,7 @@
     generateEquation();
     selectSlot(0, false);
   }
-
+  
   function generateEquation() {
     const roll = Math.random();
     let n1, op, n2, target;
@@ -686,6 +689,9 @@
 
     if (hiddenTiles.length === 0) {
       playVictoryTune();
+
+      // Hide equation section on full reveal
+      document.getElementById('middleSection').style.display = 'none';
 
       const container = document.getElementById('keypadContainer');
       container.innerHTML = `
