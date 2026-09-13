@@ -337,40 +337,42 @@
   }
 
   function getGridDimensions(solvedCount) {
-    if (solvedCount < 2) return 2;
+    if (solvedCount < 3) return 2; // Returns 2x2 for equations 1, 2, and 3
     if (solvedCount < 7) return 3;
     if (solvedCount < 12) return 4;
     return 5;
   }
 
-  function startRound() {
-    const currentItem = itemBank[currentItemIndex];
-    
-    const imgElement = document.getElementById('gameImage');
-    imgElement.src = currentItem.image;
+    function startRound() {
+      // Ensure index stays safely within itemBank bounds
+      currentItemIndex = currentItemIndex % itemBank.length;
+      const currentItem = itemBank[currentItemIndex];
+      
+      const imgElement = document.getElementById('gameImage');
+      imgElement.src = currentItem.image;
 
-    document.getElementById('itemName').textContent = "---";
+      document.getElementById('itemName').textContent = "---";
 
-    const gridSize = getGridDimensions(solvedEquationsCount);
-    const totalTiles = gridSize * gridSize;
+      const gridSize = getGridDimensions(solvedEquationsCount);
+      const totalTiles = gridSize * gridSize;
 
-    const gridOverlay = document.getElementById('gridOverlay');
-    gridOverlay.innerHTML = '';
-    gridOverlay.style.gridTemplateColumns = `repeat(${gridSize}, 1fr)`;
-    gridOverlay.style.gridTemplateRows = `repeat(${gridSize}, 1fr)`;
+      const gridOverlay = document.getElementById('gridOverlay');
+      gridOverlay.innerHTML = '';
+      gridOverlay.style.gridTemplateColumns = `repeat(${gridSize}, 1fr)`;
+      gridOverlay.style.gridTemplateRows = `repeat(${gridSize}, 1fr)`;
 
-    hiddenTiles = Array.from({ length: totalTiles }, (_, index) => index);
+      hiddenTiles = Array.from({ length: totalTiles }, (_, index) => index);
 
-    for (let i = 0; i < totalTiles; i++) {
-      const tile = document.createElement('div');
-      tile.className = 'tile';
-      tile.id = `tile-${i}`;
-      gridOverlay.appendChild(tile);
+      for (let i = 0; i < totalTiles; i++) {
+        const tile = document.createElement('div');
+        tile.className = 'tile';
+        tile.id = `tile-${i}`;
+        gridOverlay.appendChild(tile);
+      }
+
+      generateEquation();
+      selectSlot(0, false);
     }
-
-    generateEquation();
-    selectSlot(0, false);
-  }
 
   function generateEquation() {
     const roll = Math.random();
