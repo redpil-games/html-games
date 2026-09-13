@@ -336,6 +336,34 @@
     osc.stop(now + 0.4);
   }
 
+  function playVictoryTune() {
+    ensureAudioContext();
+    const now = audioCtx.currentTime;
+    
+    // Notes: C5, E5, G5, C6
+    const notes = [523.25, 659.25, 783.99, 1046.50];
+    const noteDuration = 0.12;
+
+    notes.forEach((freq, idx) => {
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(freq, now + idx * noteDuration);
+
+      const duration = (idx === notes.length - 1) ? 0.4 : noteDuration; // hold the final note longer
+
+      gain.gain.setValueAtTime(0.35, now + idx * noteDuration);
+      gain.gain.exponentialRampToValueAtTime(0.01, now + idx * noteDuration + duration);
+
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+
+      osc.start(now + idx * noteDuration);
+      osc.stop(now + idx * noteDuration + duration);
+    });
+  }
+
   function getGridDimensions(imagesCompleted) {
     if (imagesCompleted < 3) return 2;  // First 3 images: 2x2 grid
     if (imagesCompleted < 8) return 3;  // Next 5 images: 3x3 grid
@@ -492,6 +520,10 @@
     if (slotValues.includes(null) || isProcessingAnswer) return;
 
     isProcessingAnswer = true;
+
+    // Remove active highlight (yellow fill) from all slots when solved
+    document.querySelectorAll('.slot').forEach(s => s.classList.remove('active'));
+
     const num1 = parseInt(slotValues[0]);
     const op = slotValues[1];
     const num2 = parseInt(slotValues[2]);
@@ -502,7 +534,6 @@
     if (op === '×') result = num1 * num2;
     if (op === '÷') result = num2 !== 0 ? num1 / num2 : null;
 
-    document.querySelectorAll('.slot').forEach(s => s.classList.remove('active'));
     if (result === targetValue) {
       playSuccessSound();
       showFeedback('😊');
@@ -541,6 +572,9 @@
     }
 
     if (hiddenTiles.length === 0) {
+      // Play happy victory tune on image completion
+      playVictoryTune();
+
       const currentItem = itemBank[currentItemIndex];
       document.getElementById('itemName').textContent = currentItem.name;
 
