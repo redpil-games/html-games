@@ -502,6 +502,7 @@
     if (op === '×') result = num1 * num2;
     if (op === '÷') result = num2 !== 0 ? num1 / num2 : null;
 
+    document.querySelectorAll('.slot').forEach(s => s.classList.remove('active'));
     if (result === targetValue) {
       playSuccessSound();
       showFeedback('😊');
