@@ -15,7 +15,7 @@
     body {
       margin: 0;
       padding: 0;
-      background-color: #f4f4f9;
+      background-color: #cfd8dc;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       display: flex;
       justify-content: center;
@@ -24,17 +24,51 @@
     }
 
     #app {
+      position: relative;
       width: 100vw;
-      max-width: 768px;
+      max-width: 520px;
       height: 100vh;
-      max-height: 1024px;
+      max-height: 900px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       align-items: center;
-      padding: 24px 16px;
-      background-color: #ffffff;
-      border: 2px solid #000000;
+      padding: 28px 20px;
+      
+      background-color: #fff8d6;
+      border-radius: 24px;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
+      border: 4px solid #ffffff;
+      overflow: hidden;
+    }
+
+    /* Decorative Toy Blocks Frame Overlay */
+    #app::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.85;
+      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 900"><g font-family="sans-serif" font-weight="bold" font-size="28" text-anchor="middle" dominant-baseline="central"><rect x="25" y="15" width="55" height="55" rx="10" fill="%23ff5252" transform="rotate(-8 52 42)"/><text x="52" y="42" fill="white" transform="rotate(-8 52 42)">8</text><rect x="135" y="10" width="55" height="55" rx="10" fill="%23448aff" transform="rotate(6 162 37)"/><text x="162" y="37" fill="white" transform="rotate(6 162 37)">5</text><rect x="250" y="12" width="55" height="55" rx="10" fill="%23ffd740" transform="rotate(-12 277 39)"/><text x="277" y="39" fill="%23d84315" transform="rotate(-12 277 39)">-</text><rect x="355" y="10" width="55" height="55" rx="10" fill="%2369f0ae" transform="rotate(10 382 37)"/><text x="382" y="37" fill="%231b5e20" transform="rotate(10 382 37)">2</text><rect x="440" y="20" width="55" height="55" rx="10" fill="%23ffab40" transform="rotate(-15 467 47)"/><text x="467" y="47" fill="%233e2723" transform="rotate(-15 467 47)">=</text><rect x="10" y="160" width="55" height="55" rx="10" fill="%23ff4081" transform="rotate(15 37 187)"/><text x="37" y="187" fill="white" transform="rotate(15 37 187)">6</text><rect x="455" y="180" width="55" height="55" rx="10" fill="%23ff6e40" transform="rotate(-18 482 207)"/><text x="482" y="207" fill="white" transform="rotate(-18 482 207)">2</text><rect x="8" y="390" width="55" height="55" rx="10" fill="%23ffd740" transform="rotate(-10 35 417)"/><text x="35" y="417" fill="%23b71c1c" transform="rotate(-10 35 417)">1</text><rect x="455" y="410" width="55" height="55" rx="10" fill="%23ff4081" transform="rotate(12 482 437)"/><text x="482" y="437" fill="white" transform="rotate(12 482 437)">0</text><rect x="12" y="620" width="55" height="55" rx="10" fill="%2369f0ae" transform="rotate(18 39 647)"/><text x="39" y="647" fill="%231b5e20" transform="rotate(18 39 647)">2</text><rect x="452" y="610" width="55" height="55" rx="10" fill="%23ffab40" transform="rotate(-8 479 637)"/><text x="479" y="637" fill="%233e2723" transform="rotate(-8 479 637)">1</text><rect x="25" y="825" width="55" height="55" rx="10" fill="%23ffd740" transform="rotate(10 52 852)"/><text x="52" y="852" fill="%23b71c1c" transform="rotate(10 52 852)">+</text><rect x="145" y="830" width="55" height="55" rx="10" fill="%23ff5252" transform="rotate(-12 172 857)"/><text x="172" y="857" fill="white" transform="rotate(-12 172 857)">8</text><rect x="270" y="828" width="55" height="55" rx="10" fill="%2369f0ae" transform="rotate(8 297 855)"/><text x="297" y="855" fill="%231b5e20" transform="rotate(8 297 855)">6</text><rect x="395" y="825" width="55" height="55" rx="10" fill="%23448aff" transform="rotate(-15 422 852)"/><text x="422" y="852" fill="white" transform="rotate(-15 422 852)">3</text></g></svg>');
+      background-size: 100% 100%;
+      background-repeat: no-repeat;
+    }
+
+    @media (max-width: 540px) {
+      #app {
+        border-radius: 0;
+        max-height: 100vh;
+        border: none;
+      }
+    }
+
+    .top-section, .middle-section, .bottom-section {
+      position: relative;
+      z-index: 1;
     }
 
     /* --- TOP SECTION --- */
@@ -48,11 +82,13 @@
 
     .image-container {
       position: relative;
-      width: 320px;
-      height: 320px;
+      width: 290px;
+      height: 290px;
       border: 4px solid #0288d1;
-      background-color: #eee;
+      border-radius: 16px;
+      background-color: #ffffff;
       overflow: hidden;
+      box-shadow: 0 6px 16px rgba(2, 136, 209, 0.2);
     }
 
     #gameImage {
@@ -91,24 +127,30 @@
 
     .name-box {
       width: 260px;
-      padding: 10px 0;
+      padding: 8px 12px;
       border: 3px solid #2e7d32;
+      border-radius: 12px;
       text-align: center;
       font-size: 1.8rem;
       font-weight: bold;
-      letter-spacing: 4px;
+      letter-spacing: 2px;
       background-color: #ffffff;
       min-height: 52px;
       display: flex;
       align-items: center;
       justify-content: center;
+      color: #2e7d32;
+      box-shadow: 0 4px 10px rgba(46, 125, 50, 0.15);
+      direction: rtl;
+      unicode-bidi: isolate;
     }
 
     .divider {
-      width: 90%;
+      width: 85%;
       height: 3px;
-      background-color: #000000;
-      margin: 4px 0;
+      background-color: #ffe082;
+      border-radius: 2px;
+      margin: 2px 0;
     }
 
     /* --- MIDDLE SECTION --- */
@@ -125,23 +167,29 @@
       width: 68px;
       height: 68px;
       border: 3px solid #0288d1;
-      border-radius: 12px;
+      border-radius: 14px;
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 2.2rem;
       font-weight: bold;
       background-color: #ffffff;
+      color: #0288d1;
       cursor: pointer;
+      box-shadow: 0 4px 0 #0288d1;
     }
 
     .slot.active {
       background-color: #ffeb3b;
+      color: #000000;
+      border-color: #fbc02d;
+      box-shadow: 0 4px 0 #fbc02d;
     }
 
     .target-equals {
       font-size: 2.4rem;
       font-weight: bold;
+      color: #37474f;
       margin-left: 8px;
     }
 
@@ -181,8 +229,9 @@
       width: 72px;
       height: 64px;
       border: 3px solid #8d6e63;
-      border-radius: 12px;
+      border-radius: 14px;
       background-color: #ffffff;
+      color: #5d4037;
       font-size: 1.8rem;
       font-weight: bold;
       display: flex;
@@ -194,8 +243,10 @@
 
     .key-btn:active, .key-btn.selected {
       background-color: #ffeb3b;
+      color: #000000;
+      border-color: #fbc02d;
       transform: translateY(2px);
-      box-shadow: 0 2px 0 #8d6e63;
+      box-shadow: 0 2px 0 #fbc02d;
     }
 
     .feedback-emoji {
@@ -215,7 +266,7 @@
       background-color: #4caf50;
       color: white;
       border: none;
-      border-radius: 12px;
+      border-radius: 16px;
       box-shadow: 0 4px 0 #2e7d32;
       cursor: pointer;
     }
@@ -235,7 +286,7 @@
       <img id="gameImage" src="" alt="Hidden Item" />
       <div class="grid-overlay" id="gridOverlay"></div>
     </div>
-    <div class="name-box" id="itemName">---</div>
+    <div class="name-box" id="itemName"></div>
     <div class="divider"></div>
   </div>
 
@@ -253,13 +304,27 @@
 
 <script>
   const itemBank = [
-    { name: "סבתא וסבא",    image: "./images_game_001/image_001.jpg" },
-    { name: "אלביס פרסלי",   image: "./images_game_001/elvis.webp" },
-    { name: "MOUNTAIN", image: "https://picsum.photos/id/29/400/400" }
+    { name: "אלביס פרסלי",    image: "./images_game_001/elvis.webp" },
+    { name: "ביבי המלך",   image: "./images_game_001/bibi.jpg" },
+    { name: "החיפושיות", image: "./images_game_001/beatles.jpg" },
+    { name: "אריאל שרון", image: "./images_game_001/sharon.jpg" },
+    { name: "פרנק סינטרה",    image: "./images_game_001/sinatra.jpg" },
+    { name: "דני קיי",   image: "./images_game_001/danny-kaye.jpg" },
+    { name: "רפאל איתן", image: "./images_game_001/raful.jpg" },
+    { name: "דוד בן-גוריון", image: "./images_game_001/ben-gurion.jpg" },
+    { name: "רחבעם זאבי", image: "./images_game_001/gandi.jpg" },
+    { name: "וינסטון צ'רצ'יל", image: "./images_game_001/cherchil.jpg" },
+    { name: "עפרה חזה", image: "./images_game_001/ofra-haza.jpg" },
+    { name: "נפוליאון", image: "./images_game_001/napoleon.jpg" },
+    { name: "שושנה דמארי", image: "./images_game_001/shoshana.jpg" },
+    { name: "יול ברנר", image: "./images_game_001/yul-brynner.jpg" },
+    { name: "קירק דאגלס", image: "./images_game_001/kirk-douglas.jpg" },
   ];
 
-  let currentItemIndex = 0;
+  let availableIndices = [];
+  let currentItemIndex = null;
   let hiddenTiles = [];
+  let totalTilesInRound = 0;
   let activeSlot = 0;
   const slotValues = [null, null, null];
   let targetValue = 0;
@@ -277,21 +342,31 @@
 
   function playClickSound() {
     ensureAudioContext();
-    const osc = audioCtx.createOscillator();
-    const gain = audioCtx.createGain();
+    const now = audioCtx.currentTime;
 
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(800, audioCtx.currentTime);
-    osc.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.04);
+    const osc1 = audioCtx.createOscillator();
+    const gain1 = audioCtx.createGain();
+    osc1.type = 'triangle';
+    osc1.frequency.setValueAtTime(1800, now);
+    osc1.frequency.exponentialRampToValueAtTime(400, now + 0.025);
+    gain1.gain.setValueAtTime(0.35, now);
+    gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.025);
+    osc1.connect(gain1);
+    gain1.connect(audioCtx.destination);
+    osc1.start(now);
+    osc1.stop(now + 0.025);
 
-    gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.04);
-
-    osc.connect(gain);
-    gain.connect(audioCtx.destination);
-
-    osc.start();
-    osc.stop(audioCtx.currentTime + 0.04);
+    const osc2 = audioCtx.createOscillator();
+    const gain2 = audioCtx.createGain();
+    osc2.type = 'sine';
+    osc2.frequency.setValueAtTime(600, now);
+    osc2.frequency.exponentialRampToValueAtTime(120, now + 0.035);
+    gain2.gain.setValueAtTime(0.2, now);
+    gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.035);
+    osc2.connect(gain2);
+    gain2.connect(audioCtx.destination);
+    osc2.start(now);
+    osc2.stop(now + 0.035);
   }
 
   function playSuccessSound() {
@@ -302,8 +377,8 @@
     const gain = audioCtx.createGain();
 
     osc.type = 'triangle';
-    osc.frequency.setValueAtTime(523.25, now);       // C5
-    osc.frequency.setValueAtTime(783.99, now + 0.12); // G5
+    osc.frequency.setValueAtTime(523.25, now);
+    osc.frequency.setValueAtTime(783.99, now + 0.12);
 
     gain.gain.setValueAtTime(0.3, now);
     gain.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
@@ -319,28 +394,33 @@
     ensureAudioContext();
     const now = audioCtx.currentTime;
 
-    const osc = audioCtx.createOscillator();
-    const gain = audioCtx.createGain();
+    const osc1 = audioCtx.createOscillator();
+    const gain1 = audioCtx.createGain();
+    osc1.type = 'sine';
+    osc1.frequency.setValueAtTime(329.63, now);
+    gain1.gain.setValueAtTime(0.2, now);
+    gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
+    osc1.connect(gain1);
+    gain1.connect(audioCtx.destination);
+    osc1.start(now);
+    osc1.stop(now + 0.18);
 
-    osc.type = 'sawtooth';
-    osc.frequency.setValueAtTime(164.81, now);       // E3
-    osc.frequency.setValueAtTime(123.47, now + 0.15); // B2
-
-    gain.gain.setValueAtTime(0.25, now);
-    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
-
-    osc.connect(gain);
-    gain.connect(audioCtx.destination);
-
-    osc.start(now);
-    osc.stop(now + 0.4);
+    const osc2 = audioCtx.createOscillator();
+    const gain2 = audioCtx.createGain();
+    osc2.type = 'sine';
+    osc2.frequency.setValueAtTime(246.94, now + 0.12);
+    gain2.gain.setValueAtTime(0.2, now + 0.12);
+    gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+    osc2.connect(gain2);
+    gain2.connect(audioCtx.destination);
+    osc2.start(now + 0.12);
+    osc2.stop(now + 0.35);
   }
 
   function playVictoryTune() {
     ensureAudioContext();
     const now = audioCtx.currentTime;
     
-    // Notes: C5, E5, G5, C6
     const notes = [523.25, 659.25, 783.99, 1046.50];
     const noteDuration = 0.12;
 
@@ -351,7 +431,7 @@
       osc.type = 'triangle';
       osc.frequency.setValueAtTime(freq, now + idx * noteDuration);
 
-      const duration = (idx === notes.length - 1) ? 0.4 : noteDuration; // hold the final note longer
+      const duration = (idx === notes.length - 1) ? 0.4 : noteDuration;
 
       gain.gain.setValueAtTime(0.35, now + idx * noteDuration);
       gain.gain.exponentialRampToValueAtTime(0.01, now + idx * noteDuration + duration);
@@ -365,38 +445,71 @@
   }
 
   function getGridDimensions(imagesCompleted) {
-    if (imagesCompleted < 3) return 2;  // First 3 images: 2x2 grid
-    if (imagesCompleted < 8) return 3;  // Next 5 images: 3x3 grid
-    if (imagesCompleted < 13) return 4; // Next 5 images: 4x4 grid
-    return 5;                           // Beyond: 5x5 grid
+    if (imagesCompleted < 3) return 2;  
+    if (imagesCompleted < 8) return 3;  
+    if (imagesCompleted < 13) return 4; 
+    return 5;                           
   }
 
+  function getNextImageIndex() {
+    if (availableIndices.length === 0) {
+      availableIndices = Array.from({ length: itemBank.length }, (_, i) => i);
+    }
+    const randomIndex = Math.floor(Math.random() * availableIndices.length);
+    return availableIndices.splice(randomIndex, 1)[0];
+  }
+
+    // RTL Name masking function
+    function updatePartialNameDisplay() {
+      const currentName = itemBank[currentItemIndex].name;
+      const totalChars = currentName.length;
+      const revealedTilesCount = totalTilesInRound - hiddenTiles.length;
+
+      // Calculate revealed character count based on tile ratio
+      const charsToShowCount = Math.floor((revealedTilesCount / totalTilesInRound) * totalChars);
+
+      if (charsToShowCount === 0) {
+        document.getElementById('itemName').textContent = '.'.repeat(Math.min(totalChars, 6));
+        return;
+      }
+
+      if (charsToShowCount >= totalChars) {
+        document.getElementById('itemName').textContent = currentName;
+        return;
+      }
+
+      // Reveal characters sequentially from start to end
+      const visiblePart = currentName.slice(0, charsToShowCount);
+      const hiddenPart = '.'.repeat(totalChars - charsToShowCount);
+
+      document.getElementById('itemName').textContent = visiblePart + hiddenPart;
+    }
+
   function startRound() {
-    currentItemIndex = currentItemIndex % itemBank.length;
+    currentItemIndex = getNextImageIndex();
     const currentItem = itemBank[currentItemIndex];
     
     const imgElement = document.getElementById('gameImage');
     imgElement.src = currentItem.image;
 
-    document.getElementById('itemName').textContent = "---";
-
     const gridSize = getGridDimensions(revealedImagesCount);
-    const totalTiles = gridSize * gridSize;
+    totalTilesInRound = gridSize * gridSize;
 
     const gridOverlay = document.getElementById('gridOverlay');
     gridOverlay.innerHTML = '';
     gridOverlay.style.gridTemplateColumns = `repeat(${gridSize}, 1fr)`;
     gridOverlay.style.gridTemplateRows = `repeat(${gridSize}, 1fr)`;
 
-    hiddenTiles = Array.from({ length: totalTiles }, (_, index) => index);
+    hiddenTiles = Array.from({ length: totalTilesInRound }, (_, index) => index);
 
-    for (let i = 0; i < totalTiles; i++) {
+    for (let i = 0; i < totalTilesInRound; i++) {
       const tile = document.createElement('div');
       tile.className = 'tile';
       tile.id = `tile-${i}`;
       gridOverlay.appendChild(tile);
     }
 
+    updatePartialNameDisplay();
     generateEquation();
     selectSlot(0, false);
   }
@@ -520,8 +633,6 @@
     if (slotValues.includes(null) || isProcessingAnswer) return;
 
     isProcessingAnswer = true;
-
-    // Remove active highlight (yellow fill) from all slots when solved
     document.querySelectorAll('.slot').forEach(s => s.classList.remove('active'));
 
     const num1 = parseInt(slotValues[0]);
@@ -571,16 +682,14 @@
       document.getElementById(`tile-${tileToReveal}`).classList.add('revealed');
     }
 
-    if (hiddenTiles.length === 0) {
-      // Play happy victory tune on image completion
-      playVictoryTune();
+    updatePartialNameDisplay();
 
-      const currentItem = itemBank[currentItemIndex];
-      document.getElementById('itemName').textContent = currentItem.name;
+    if (hiddenTiles.length === 0) {
+      playVictoryTune();
 
       const container = document.getElementById('keypadContainer');
       container.innerHTML = `
-        <button class="next-btn" onclick="nextRound()">Next Puzzle</button>
+        <button class="next-btn" onclick="nextRound()">... קדימה</button>
       `;
     } else {
       generateEquation();
@@ -591,11 +700,10 @@
   function nextRound() {
     playClickSound();
     revealedImagesCount++;
-    currentItemIndex = (currentItemIndex + 1) % itemBank.length;
     startRound();
   }
 
-  // Initialize Game on Load
+  // Initialize Game
   startRound();
 </script>
 </body>
