@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>Math Image Reveal</title>
+  <title>חשבון + תמונה = כיף</title>
   <style>
     * {
       box-sizing: border-box;
@@ -34,7 +34,6 @@
       justify-content: space-between;
       align-items: center;
       padding: 24px 20px;
-      
       background-color: #fff8d6;
       border-radius: 24px;
       box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
@@ -76,6 +75,26 @@
       align-items: center;
       width: 100%;
       gap: 12px;
+    }
+
+    .progress-wrapper {
+      width: 280px;
+      height: 14px;
+      background-color: #ffffff;
+      border: 3px solid #0288d1;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 0 0 6px #fff8d6, 0 2px 6px rgba(2, 136, 209, 0.15); /* Adds a solid border-mask using app background color */
+      position: relative;
+      z-index: 2;
+    }
+
+    .progress-bar {
+      width: 0%;
+      height: 100%;
+      background-color: #81d4fa;
+      border-radius: 6px;
+      transition: width 0.4s ease-in-out;
     }
 
     .image-container {
@@ -343,6 +362,9 @@
 
 <div id="app">
   <div class="top-section">
+    <div class="progress-wrapper">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
     <div class="image-container" id="imageContainer">
       <img id="gameImage" src="" alt="Hidden Item" />
       <div class="grid-overlay" id="gridOverlay"></div>
@@ -383,6 +405,7 @@
   let availableIndices = [];
   let currentItemIndex = null;
   let hiddenTiles = [];
+  let revealedTiles = [];
   let totalTilesInRound = 0;
   let activeSlot = 0;
   const slotValues = [null, null, null];
@@ -517,7 +540,15 @@
     return availableIndices.splice(randomIndex, 1)[0];
   }
 
+  function updateProgressBar() {
+    const revealedTilesCount = totalTilesInRound - hiddenTiles.length;
+    const percentage = totalTilesInRound > 0 ? (revealedTilesCount / totalTilesInRound) * 100 : 0;
+    document.getElementById('progressBar').style.width = `${percentage}%`;
+  }
+
   function updatePartialNameDisplay() {
+    updateProgressBar();
+
     const currentName = itemBank[currentItemIndex].name;
     const totalChars = currentName.length;
     const revealedTilesCount = totalTilesInRound - hiddenTiles.length;
@@ -558,6 +589,7 @@
     gridOverlay.style.gridTemplateRows = `repeat(${gridSize}, 1fr)`;
 
     hiddenTiles = Array.from({ length: totalTilesInRound }, (_, index) => index);
+    revealedTiles = [];
 
     for (let i = 0; i < totalTilesInRound; i++) {
       const tile = document.createElement('div');
@@ -674,7 +706,7 @@
 
   function updateKeypadStates() {
     const isNumberSlot = activeSlot === 0 || activeSlot === 2;
-    const isOperatorSlot = activeSlot === 1;
+    const isOperatorSlot = activeSlot === 0 || activeSlot === 1;
 
     document.querySelectorAll('.num-key, .mod-key').forEach(btn => {
       btn.classList.toggle('disabled', !isNumberSlot);
@@ -713,13 +745,22 @@
   }
 
   function handleOpInput(op) {
-    if (isProcessingAnswer || activeSlot !== 1) return;
+    if (isProcessingAnswer || activeSlot === 2) return;
     playClickSound();
 
-    slotValues[1] = op;
-    document.getElementById('slot1').textContent = op;
-
-    selectSlot(2, false);
+    if (activeSlot === 0) {
+      if (slotValues[0] === null) {
+        slotValues[0] = 0;
+        document.getElementById('slot0').textContent = '0';
+      }
+      slotValues[1] = op;
+      document.getElementById('slot1').textContent = op;
+      selectSlot(2, false);
+    } else if (activeSlot === 1) {
+      slotValues[1] = op;
+      document.getElementById('slot1').textContent = op;
+      selectSlot(2, false);
+    }
   }
 
   function handleTenModifier(delta) {
@@ -780,6 +821,14 @@
     } else {
       playErrorSound();
       showFeedback('😢');
+
+      if (revealedTiles.length > 0) {
+        const tileToHide = revealedTiles.pop();
+        hiddenTiles.push(tileToHide);
+        document.getElementById(`tile-${tileToHide}`).classList.remove('revealed');
+        updatePartialNameDisplay();
+      }
+
       const middleSection = document.getElementById('middleSection');
       middleSection.style.opacity = '0.3';
 
@@ -804,6 +853,7 @@
     if (hiddenTiles.length > 0) {
       const randomIndex = Math.floor(Math.random() * hiddenTiles.length);
       const tileToReveal = hiddenTiles.splice(randomIndex, 1)[0];
+      revealedTiles.push(tileToReveal);
       document.getElementById(`tile-${tileToReveal}`).classList.add('revealed');
     }
 
@@ -816,7 +866,7 @@
 
       const container = document.getElementById('keypadContainer');
       container.innerHTML = `
-        <button class="next-btn" onclick="nextRound()">... קדימה</button>
+        <button class="next-btn" onclick="nextRound()">... יופי טופי. הבא בתור</button>
       `;
     } else {
       generateEquation();
