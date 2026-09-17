@@ -728,7 +728,7 @@
 
   function startRound() {
     stopImageSound();
-    currentItemIndex = 17; // getNextImageIndex();
+    currentItemIndex = getNextImageIndex();
     const currentItem = itemBank[currentItemIndex];
     
     const imgElement = document.getElementById('gameImage');
