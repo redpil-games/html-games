@@ -27,18 +27,17 @@
       position: relative;
       width: 100vw;
       max-width: 520px;
-      height: 100vh;
-      max-height: 900px;
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       align-items: center;
-      padding: 24px 20px;
+      padding: 16px 16px 20px 16px;
       background-color: #fff8d6;
       border-radius: 24px;
       box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
       border: 4px solid #ffffff;
-      overflow: hidden;
+      overflow-y: auto;
     }
 
     #app::before {
@@ -59,9 +58,32 @@
     @media (max-width: 540px) {
       #app {
         border-radius: 0;
-        max-height: 100vh;
         border: none;
       }
+    }
+
+    .header-bar {
+      width: 100%;
+      display: flex;
+      justify-content: flex-end;
+      position: absolute;
+      top: 10px;
+      right: 12px;
+      z-index: 10;
+    }
+
+    .mute-btn {
+      background: #ffffff;
+      border: 2px solid #0288d1;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      font-size: 1.2rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
     }
 
     .top-section, .middle-section, .bottom-section {
@@ -74,17 +96,19 @@
       flex-direction: column;
       align-items: center;
       width: 100%;
-      gap: 12px;
+      gap: 8px;
+      margin-top: 16px;
     }
 
     .progress-wrapper {
-      width: 280px;
-      height: 14px;
+      width: 100%;
+      max-width: 260px;
+      height: 12px;
       background-color: #ffffff;
       border: 3px solid #0288d1;
       border-radius: 10px;
       overflow: hidden;
-      box-shadow: 0 0 0 6px #fff8d6, 0 2px 6px rgba(2, 136, 209, 0.15);
+      box-shadow: 0 0 0 5px #fff8d6, 0 2px 6px rgba(2, 136, 209, 0.15);
       position: relative;
       z-index: 2;
     }
@@ -99,8 +123,9 @@
 
     .image-container {
       position: relative;
-      width: 280px;
-      height: 280px;
+      width: 100%;
+      max-width: 260px;
+      aspect-ratio: 1 / 1;
       border: 4px solid #0288d1;
       border-radius: 16px;
       background-color: #ffffff;
@@ -143,16 +168,17 @@
     }
 
     .name-box {
-      width: 260px;
-      padding: 6px 12px;
+      width: 100%;
+      max-width: 250px;
+      padding: 4px 10px;
       border: 3px solid #2e7d32;
       border-radius: 12px;
       text-align: center;
-      font-size: 1.7rem;
+      font-size: 1.5rem;
       font-weight: bold;
       letter-spacing: 2px;
       background-color: #ffffff;
-      min-height: 48px;
+      min-height: 42px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -167,111 +193,130 @@
       height: 3px;
       background-color: #ffe082;
       border-radius: 2px;
-      margin: 2px 0;
+      margin: 4px 0;
     }
 
     .middle-section {
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 10px;
+      gap: 12px;
       width: 100%;
       transition: opacity 0.2s ease;
-      margin-top: 24px;
-      margin-bottom: 8px;
+      margin-top: 6px;
+      margin-bottom: 12px;
+      direction: ltr;
     }
 
-    .slot {
-      width: 72px;
-      height: 64px;
+    .middle-section.shake {
+      animation: shake 0.4s ease-in-out;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-8px); }
+      40%, 80% { transform: translateX(8px); }
+    }
+
+    .equation-box {
+      min-width: 160px;
+      height: 52px;
+      padding: 0 12px;
       border: 3px solid #0288d1;
-      border-radius: 14px;
+      border-radius: 16px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 2rem;
+      font-size: 1.9rem;
       font-weight: bold;
       background-color: #ffffff;
-      color: #0288d1;
-      cursor: pointer;
-      box-shadow: 0 4px 0 #0288d1;
-    }
-
-    .slot.active {
-      background-color: #ffeb3b;
       color: #000000;
-      border-color: #fbc02d;
-      box-shadow: 0 4px 0 #fbc02d;
+      box-shadow: 0 0 0 6px rgba(255, 248, 214, 0.9), 0 4px 0 #0288d1;
+      letter-spacing: 2px;
+      white-space: pre;
     }
 
     .target-equals {
-      font-size: 2.2rem;
+      font-size: 1.9rem;
       font-weight: bold;
-      color: #37474f;
-      margin-left: 6px;
+      color: #0288d1;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-shadow: -2px -2px 0 #fff8d6, 2px -2px 0 #fff8d6, -2px 2px 0 #fff8d6, 2px 2px 0 #fff8d6;
     }
 
     .bottom-section {
       width: 100%;
+      max-width: 380px;
+      min-height: 290px;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      flex: 1;
+      background-color: rgba(255, 255, 255, 0.7);
+      border-radius: 20px;
+      padding: 10px;
+      box-shadow: 0 0 0 6px #fff8d6, 0 4px 12px rgba(0, 0, 0, 0.05);
+      backdrop-filter: blur(2px);
     }
 
     .keypad-container-static {
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: space-evenly;
+      gap: 10px;
+      width: 100%;
+    }
+
+    .unified-pad {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      grid-template-rows: repeat(4, 46px);
+      gap: 6px;
+      width: 100%;
+      direction: ltr;
+    }
+
+    /* Key Base Styles */
+    .key-btn {
       width: 100%;
       height: 100%;
-    }
-
-    .keypad-columns {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 12px;
-      direction: ltr;
-      flex: 1;
-    }
-
-    .digits-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 52px);
-      gap: 8px;
-      direction: ltr;
-    }
-
-    .ops-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 52px);
-      gap: 8px;
-      direction: ltr;
-    }
-
-    .key-btn {
-      width: 52px;
-      height: 46px;
-      border: 3px solid #8d6e63;
       border-radius: 12px;
-      background-color: #ffffff;
-      color: #5d4037;
       font-size: 1.3rem;
       font-weight: bold;
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 4px 0 #8d6e63;
       cursor: pointer;
       user-select: none;
     }
 
-    .key-btn:active {
+    /* Digit Key Colors (Neutral Wood) */
+    .num-key {
+      border: 3px solid #8d6e63;
+      background-color: #ffffff;
+      color: #5d4037;
+      box-shadow: 0 3px 0 #8d6e63;
+    }
+
+    .num-key:active {
       transform: translateY(2px);
-      box-shadow: 0 2px 0 #8d6e63;
+      box-shadow: 0 1px 0 #8d6e63;
+    }
+
+    /* Operator Key Colors (Distinct Blue) */
+    .op-key {
+      border: 3px solid #0288d1;
+      background-color: #e1f5fe;
+      color: #01579b;
+      font-size: 1.5rem;
+      box-shadow: 0 3px 0 #0288d1;
+    }
+
+    .op-key:active {
+      transform: translateY(2px);
+      box-shadow: 0 1px 0 #0288d1;
     }
 
     .key-btn.disabled {
@@ -283,39 +328,37 @@
       color: #757575;
     }
 
+    /* Delete Key Colors */
     .clear-btn-large {
       grid-column: span 2;
-      grid-row: span 2;
-      width: 112px;
-      height: 100px;
-      font-size: 1.4rem;
+      font-size: 1.15rem;
+      background-color: #ffffff;
       border: 3px solid #d32f2f;
       color: #b71c1c;
-      box-shadow: 0 4px 0 #b71c1c;
+      box-shadow: 0 3px 0 #b71c1c;
     }
 
     .clear-btn-large:active {
-      border-color: #b71c1c;
-      box-shadow: 0 2px 0 #b71c1c;
+      transform: translateY(2px);
+      box-shadow: 0 1px 0 #b71c1c;
     }
 
     .check-btn-wide {
-      width: 220px;
+      width: 100%;
       padding: 10px;
-      font-size: 1.35rem;
+      font-size: 1.25rem;
       font-weight: bold;
       background-color: #ffffff;
       color: #2e7d32;
       border: 3px solid #2e7d32;
-      border-radius: 20px;
+      border-radius: 16px;
       box-shadow: 0 4px 0 #1b5e20;
       cursor: pointer;
       direction: rtl;
-      margin-bottom: 24px;
     }
 
     .check-btn-wide:disabled {
-      opacity: 0.75;
+      opacity: 0.5;
       cursor: not-allowed;
       box-shadow: none;
       background-color: #f5f5f5;
@@ -329,8 +372,43 @@
       background-color: #e8f5e9;
     }
 
+    .victory-controls {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      width: 100%;
+      align-items: center;
+    }
+
+    .replay-btn {
+      padding: 10px 20px;
+      font-size: 1.15rem;
+      font-weight: bold;
+      background-color: #0288d1;
+      color: white;
+      border: none;
+      border-radius: 14px;
+      box-shadow: 0 4px 0 #01579b;
+      cursor: pointer;
+      direction: rtl;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .replay-btn:active {
+      transform: translateY(2px);
+      box-shadow: 0 2px 0 #01579b;
+    }
+
     .feedback-emoji {
-      font-size: 8.5rem;
+      font-size: 6rem;
+      line-height: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      margin: auto;
       animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
 
@@ -340,8 +418,8 @@
     }
 
     .next-btn {
-      padding: 16px 32px;
-      font-size: 1.5rem;
+      padding: 14px 28px;
+      font-size: 1.35rem;
       font-weight: bold;
       background-color: #4caf50;
       color: white;
@@ -361,6 +439,10 @@
 <body>
 
 <div id="app">
+  <div class="header-bar">
+    <button class="mute-btn" id="muteBtn" onclick="toggleMute()">🔊</button>
+  </div>
+
   <div class="top-section">
     <div class="progress-wrapper">
       <div class="progress-bar" id="progressBar"></div>
@@ -374,9 +456,7 @@
   </div>
 
   <div class="middle-section" id="middleSection">
-    <div class="slot active" id="slot0" onclick="selectSlot(0)">?</div>
-    <div class="slot" id="slot1" onclick="selectSlot(1)">?</div>
-    <div class="slot" id="slot2" onclick="selectSlot(2)">?</div>
+    <div class="equation-box" id="equationDisplay"></div>
     <div class="target-equals" id="targetDisplay">= ?</div>
   </div>
 
@@ -407,13 +487,30 @@
   let hiddenTiles = [];
   let revealedTiles = [];
   let totalTilesInRound = 0;
-  let activeSlot = 0;
-  const slotValues = [null, null, null];
+  
+  let num1 = '';
+  let op = '';
+  let num2 = '';
+
   let targetValue = 0;
   let revealedImagesCount = 0;
   let isProcessingAnswer = false;
+  let isMuted = false;
 
-  const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  const AudioContext = window.AudioContext || window.webkitAudioContext;
+  const audioCtx = new AudioContext();
+  const soundBuffers = {};
+  let currentImageAudio = null;
+
+  const soundFiles = {
+    click: 'sounds/click.wav',
+    success: 'sounds/success.wav',
+    error: 'sounds/error.wav',
+    victory: 'sounds/victory.wav'
+  };
+
+  window.addEventListener('click', ensureAudioContext, { once: true });
+  window.addEventListener('touchstart', ensureAudioContext, { once: true });
 
   function ensureAudioContext() {
     if (audioCtx.state === 'suspended') {
@@ -421,10 +518,44 @@
     }
   }
 
-  function playClickSound() {
-    ensureAudioContext();
-    const now = audioCtx.currentTime;
+  async function preloadSounds() {
+    for (const [key, path] of Object.entries(soundFiles)) {
+      try {
+        const response = await fetch(path);
+        if (response.ok) {
+          const arrayBuffer = await response.arrayBuffer();
+          soundBuffers[key] = await audioCtx.decodeAudioData(arrayBuffer);
+        }
+      } catch (e) {
+        console.warn(`Could not load audio file ${path}, synthesized sound will be used instead.`);
+      }
+    }
+  }
+  preloadSounds();
 
+  function toggleMute() {
+    isMuted = !isMuted;
+    document.getElementById('muteBtn').textContent = isMuted ? '🔇' : '🔊';
+    if (isMuted) {
+      stopImageSound();
+    }
+  }
+
+  function playSound(key, fallbackFn) {
+    if (isMuted) return;
+    ensureAudioContext();
+    if (soundBuffers[key]) {
+      const source = audioCtx.createBufferSource();
+      source.buffer = soundBuffers[key];
+      source.connect(audioCtx.destination);
+      source.start(0);
+    } else if (fallbackFn) {
+      fallbackFn();
+    }
+  }
+
+  function synthClickSound() {
+    const now = audioCtx.currentTime;
     const osc1 = audioCtx.createOscillator();
     const gain1 = audioCtx.createGain();
     osc1.type = 'triangle';
@@ -436,45 +567,25 @@
     gain1.connect(audioCtx.destination);
     osc1.start(now);
     osc1.stop(now + 0.025);
-
-    const osc2 = audioCtx.createOscillator();
-    const gain2 = audioCtx.createGain();
-    osc2.type = 'sine';
-    osc2.frequency.setValueAtTime(600, now);
-    osc2.frequency.exponentialRampToValueAtTime(120, now + 0.035);
-    gain2.gain.setValueAtTime(0.2, now);
-    gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.035);
-    osc2.connect(gain2);
-    gain2.connect(audioCtx.destination);
-    osc2.start(now);
-    osc2.stop(now + 0.035);
   }
 
-  function playSuccessSound() {
-    ensureAudioContext();
+  function synthSuccessSound() {
     const now = audioCtx.currentTime;
-
     const osc = audioCtx.createOscillator();
     const gain = audioCtx.createGain();
-
     osc.type = 'triangle';
     osc.frequency.setValueAtTime(523.25, now);
     osc.frequency.setValueAtTime(783.99, now + 0.12);
-
     gain.gain.setValueAtTime(0.3, now);
     gain.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
-
     osc.connect(gain);
     gain.connect(audioCtx.destination);
-
     osc.start(now);
     osc.stop(now + 0.35);
   }
 
-  function playErrorSound() {
-    ensureAudioContext();
+  function synthErrorSound() {
     const now = audioCtx.currentTime;
-
     const osc1 = audioCtx.createOscillator();
     const gain1 = audioCtx.createGain();
     osc1.type = 'sine';
@@ -498,31 +609,63 @@
     osc2.stop(now + 0.35);
   }
 
-  function playVictoryTune() {
-    ensureAudioContext();
+  function synthVictoryTune() {
     const now = audioCtx.currentTime;
-    
     const notes = [523.25, 659.25, 783.99, 1046.50];
     const noteDuration = 0.12;
 
     notes.forEach((freq, idx) => {
       const osc = audioCtx.createOscillator();
       const gain = audioCtx.createGain();
-
       osc.type = 'triangle';
       osc.frequency.setValueAtTime(freq, now + idx * noteDuration);
-
       const duration = (idx === notes.length - 1) ? 0.4 : noteDuration;
-
       gain.gain.setValueAtTime(0.35, now + idx * noteDuration);
       gain.gain.exponentialRampToValueAtTime(0.01, now + idx * noteDuration + duration);
-
       osc.connect(gain);
       gain.connect(audioCtx.destination);
-
       osc.start(now + idx * noteDuration);
       osc.stop(now + idx * noteDuration + duration);
     });
+  }
+
+  function playClickSound() { playSound('click', synthClickSound); }
+  function playSuccessSound() { playSound('success', synthSuccessSound); }
+  function playErrorSound() { playSound('error', synthErrorSound); }
+  function playVictoryTune() { playSound('victory', synthVictoryTune); }
+
+  function playImageSound() {
+    stopImageSound();
+    if (isMuted) return;
+    ensureAudioContext();
+
+    const currentItem = itemBank[currentItemIndex];
+    if (!currentItem || !currentItem.image) return;
+
+    const baseName = currentItem.image.split('/').pop().split('.')[0];
+    const soundPath = `sounds_game_001/${baseName}.ogg`;
+    
+    const audio = new Audio(soundPath);
+    currentImageAudio = audio;
+
+    const playPromise = audio.play();
+    if (playPromise !== undefined) {
+      playPromise.catch(error => {
+        const mp3Fallback = new Audio(`sounds_game_001/${baseName}.mp3`);
+        currentImageAudio = mp3Fallback;
+        mp3Fallback.play().catch(e => {
+          console.warn(`Audio playback failed for sounds_game_001/${baseName}.ogg or .mp3:`, e);
+        });
+      });
+    }
+  }
+
+  function stopImageSound() {
+    if (currentImageAudio) {
+      currentImageAudio.pause();
+      currentImageAudio.currentTime = 0;
+      currentImageAudio = null;
+    }
   }
 
   function getGridDimensions(imagesCompleted) {
@@ -530,6 +673,13 @@
     if (imagesCompleted < 4) return 3;  
     if (imagesCompleted < 7) return 4; 
     return 5;                           
+  }
+
+  function getTargetResultRange(roundNumber) {
+    if (roundNumber === 1) return { min: 0, max: 20 };
+    if (roundNumber === 2) return { min: 0, max: 50 };
+    if (roundNumber === 3 || roundNumber === 4) return { min: 30, max: 100 };
+    return { min: 50, max: 999 };
   }
 
   function getNextImageIndex() {
@@ -572,6 +722,7 @@
   }
 
   function startRound() {
+    stopImageSound();
     currentItemIndex = getNextImageIndex();
     const currentItem = itemBank[currentItemIndex];
     
@@ -601,7 +752,7 @@
     updatePartialNameDisplay();
     generateEquation();
     renderStaticKeypad();
-    selectSlot(0, false);
+    resetEquationDisplay();
   }
   
   function getRandomInt(min, max) {
@@ -609,93 +760,87 @@
   }
 
   function generateEquation() {
-    let minTarget, maxTarget;
-
-    if (revealedImagesCount < 2) {
-      minTarget = 1;
-      maxTarget = 49;
-    } else if (revealedImagesCount < 4) {
-      minTarget = 1;
-      maxTarget = 99;
-    } else if (revealedImagesCount < 7) {
-      minTarget = 51;
-      maxTarget = 499;
-    } else {
-      minTarget = 101;
-      maxTarget = 999;
-    }
-
     const ops = ['+', '-', '×', '÷'];
-    const op = ops[Math.floor(Math.random() * ops.length)];
-    let n1, n2, target;
+    const selectedOp = ops[Math.floor(Math.random() * ops.length)];
+    const roundNumber = revealedImagesCount + 1;
+    const resultRange = getTargetResultRange(roundNumber);
 
+    let n1, n2, target;
     let valid = false;
     let attempts = 0;
 
-    while (!valid && attempts < 200) {
+    while (!valid && attempts < 500) {
       attempts++;
-      if (op === '+') {
-        n1 = getRandomInt(0, maxTarget);
-        n2 = getRandomInt(0, maxTarget);
-        target = n1 + n2;
-      } else if (op === '-') {
-        n1 = getRandomInt(0, maxTarget + 50);
-        n2 = getRandomInt(0, n1);
-        target = n1 - n2;
-      } else if (op === '×') {
-        n1 = getRandomInt(1, 50);
-        n2 = getRandomInt(1, 20);
+
+      if (selectedOp === '+') {
+        target = getRandomInt(resultRange.min, resultRange.max);
+        n1 = getRandomInt(0, target);
+        n2 = target - n1;
+      } else if (selectedOp === '-') {
+        target = getRandomInt(resultRange.min, resultRange.max);
+        n2 = getRandomInt(0, 50); 
+        n1 = target + n2;
+      } else if (selectedOp === '×') {
+        n1 = getRandomInt(1, 12);
+        n2 = getRandomInt(0, Math.floor(resultRange.max / n1));
         target = n1 * n2;
-      } else if (op === '÷') {
-        n2 = getRandomInt(1, 20);
-        target = getRandomInt(minTarget, Math.min(maxTarget, 99));
+      } else if (selectedOp === '÷') {
+        n2 = getRandomInt(1, 10);
+        target = getRandomInt(resultRange.min, resultRange.max);
         n1 = target * n2;
       }
 
-      if (target >= minTarget && target <= maxTarget) {
+      if (n1 <= 99 && n2 <= 99 && target >= resultRange.min && target <= resultRange.max) {
         valid = true;
       }
     }
 
     targetValue = target;
     document.getElementById('targetDisplay').textContent = `= ${targetValue}`;
-    
-    slotValues[0] = null;
-    slotValues[1] = null;
-    slotValues[2] = null;
+    resetEquationDisplay();
+  }
 
-    document.getElementById('slot0').textContent = '?';
-    document.getElementById('slot1').textContent = '?';
-    document.getElementById('slot2').textContent = '?';
+  function resetEquationDisplay() {
+    num1 = '';
+    op = '';
+    num2 = '';
+    updateDisplay();
+  }
+
+  function updateDisplay() {
+    const displayEl = document.getElementById('equationDisplay');
+    let text = '';
+    if (num1 !== '') text += num1;
+    if (op !== '') text += ` ${op} `;
+    if (num2 !== '') text += num2;
+
+    displayEl.textContent = text;
+    updateKeypadStates();
   }
 
   function renderStaticKeypad() {
     const container = document.getElementById('keypadContainer');
     container.innerHTML = `
       <div class="keypad-container-static">
-        <div class="keypad-columns">
-          <div class="digits-grid" id="digitsPad">
-            <button class="key-btn num-key" onclick="handleNumInput(1)">1</button>
-            <button class="key-btn num-key" onclick="handleNumInput(2)">2</button>
-            <button class="key-btn num-key" onclick="handleNumInput(3)">3</button>
-            <button class="key-btn num-key" onclick="handleNumInput(4)">4</button>
-            <button class="key-btn num-key" onclick="handleNumInput(5)">5</button>
-            <button class="key-btn num-key" onclick="handleNumInput(6)">6</button>
-            <button class="key-btn num-key" onclick="handleNumInput(7)">7</button>
-            <button class="key-btn num-key" onclick="handleNumInput(8)">8</button>
-            <button class="key-btn num-key" onclick="handleNumInput(9)">9</button>
-            <button class="key-btn mod-key" onclick="handleTenModifier(10)">+10</button>
-            <button class="key-btn num-key" onclick="handleNumInput(0)">0</button>
-            <button class="key-btn mod-key" onclick="handleTenModifier(-10)">-10</button>
-          </div>
+        <div class="unified-pad">
+          <button class="key-btn num-key" onclick="handleNumInput('1')">1</button>
+          <button class="key-btn num-key" onclick="handleNumInput('2')">2</button>
+          <button class="key-btn num-key" onclick="handleNumInput('3')">3</button>
+          <button class="key-btn op-key" onclick="handleOpInput('+')">+</button>
+          <button class="key-btn op-key" onclick="handleOpInput('-')">-</button>
 
-          <div class="ops-grid" id="opsPad">
-            <button class="key-btn op-key" onclick="handleOpInput('+')">+</button>
-            <button class="key-btn op-key" onclick="handleOpInput('-')">-</button>
-            <button class="key-btn op-key" onclick="handleOpInput('×')">×</button>
-            <button class="key-btn op-key" onclick="handleOpInput('÷')">÷</button>
-            <button class="key-btn clear-btn-large" id="clearBtn" onclick="handleClear()">מחק</button>
-          </div>
+          <button class="key-btn num-key" onclick="handleNumInput('4')">4</button>
+          <button class="key-btn num-key" onclick="handleNumInput('5')">5</button>
+          <button class="key-btn num-key" onclick="handleNumInput('6')">6</button>
+          <button class="key-btn op-key" onclick="handleOpInput('×')">×</button>
+          <button class="key-btn op-key" onclick="handleOpInput('÷')">÷</button>
+
+          <button class="key-btn num-key" onclick="handleNumInput('7')">7</button>
+          <button class="key-btn num-key" onclick="handleNumInput('8')">8</button>
+          <button class="key-btn num-key" onclick="handleNumInput('9')">9</button>
+          <button class="key-btn clear-btn-large" id="clearBtn" onclick="handleDelete()">מחק</button>
+
+          <button class="key-btn num-key zero-btn" id="keyZero" style="grid-column: 2;" onclick="handleNumInput('0')">0</button>
         </div>
 
         <button class="check-btn-wide" id="checkBtn" onclick="checkSolution()" disabled>בדוק משוואה</button>
@@ -705,88 +850,74 @@
   }
 
   function updateKeypadStates() {
-    const isNumberSlot = activeSlot === 0 || activeSlot === 2;
-    const isOperatorSlot = activeSlot === 0 || activeSlot === 1;
+    let digitsAllowed = false;
 
-    document.querySelectorAll('.num-key, .mod-key').forEach(btn => {
-      btn.classList.toggle('disabled', !isNumberSlot);
+    if (op === '') {
+      if (num1.length < 2) {
+        digitsAllowed = true;
+      }
+    } else {
+      if (num2.length < 2) {
+        digitsAllowed = true;
+      }
+    }
+
+    document.querySelectorAll('.num-key').forEach(btn => {
+      btn.classList.toggle('disabled', !digitsAllowed);
     });
 
+    const opsAllowed = num1 !== '' && num2 === '';
     document.querySelectorAll('.op-key').forEach(btn => {
-      btn.classList.toggle('disabled', !isOperatorSlot);
+      btn.classList.toggle('disabled', !opsAllowed);
     });
 
     const checkBtn = document.getElementById('checkBtn');
     if (checkBtn) {
-      const isComplete = slotValues[0] !== null && slotValues[1] !== null && slotValues[2] !== null;
-      checkBtn.disabled = !isComplete;
+      const isValidEquation = num1 !== '' && op !== '' && num2 !== '';
+      checkBtn.disabled = !isValidEquation;
     }
   }
 
-  function selectSlot(index, playSound = true) {
+  function handleNumInput(digit) {
     if (isProcessingAnswer) return;
-    if (playSound) playClickSound();
 
-    activeSlot = index;
-    document.querySelectorAll('.slot').forEach((s, idx) => {
-      s.classList.toggle('active', idx === activeSlot);
-    });
-    updateKeypadStates();
-  }
-
-  function handleNumInput(val) {
-    if (isProcessingAnswer || activeSlot === 1) return;
-    playClickSound();
-
-    slotValues[activeSlot] = val;
-    document.getElementById(`slot${activeSlot}`).textContent = val;
-
-    updateKeypadStates();
-  }
-
-  function handleOpInput(op) {
-    if (isProcessingAnswer || activeSlot === 2) return;
-    playClickSound();
-
-    if (activeSlot === 0) {
-      if (slotValues[0] === null) {
-        slotValues[0] = 0;
-        document.getElementById('slot0').textContent = '0';
+    if (op === '') {
+      if (num1.length < 2) {
+        num1 += digit;
+        playClickSound();
       }
-      slotValues[1] = op;
-      document.getElementById('slot1').textContent = op;
-      selectSlot(2, false);
-    } else if (activeSlot === 1) {
-      slotValues[1] = op;
-      document.getElementById('slot1').textContent = op;
-      selectSlot(2, false);
+    } else {
+      if (num2.length < 2) {
+        num2 += digit;
+        playClickSound();
+      }
     }
+
+    updateDisplay();
   }
 
-  function handleTenModifier(delta) {
-    if (isProcessingAnswer || activeSlot === 1) return;
+  function handleOpInput(selectedOp) {
+    if (isProcessingAnswer) return;
+    if (num1 === '') return;
+
     playClickSound();
-
-    let currentVal = slotValues[activeSlot] !== null ? parseInt(slotValues[activeSlot]) : 0;
-    let newVal = currentVal + delta;
-
-    if (newVal < 0 || newVal > 999) {
-      newVal = currentVal;
-    }
-
-    slotValues[activeSlot] = newVal;
-    document.getElementById(`slot${activeSlot}`).textContent = newVal;
-
-    updateKeypadStates();
+    op = selectedOp;
+    updateDisplay();
   }
 
-  function handleClear() {
+  function handleDelete() {
     if (isProcessingAnswer) return;
     playClickSound();
 
-    slotValues[activeSlot] = null;
-    document.getElementById(`slot${activeSlot}`).textContent = '?';
-    updateKeypadStates();
+    if (num2 !== '') {
+      num2 = num2.slice(0, -1);
+    } else if (op !== '') {
+      op = '';
+    } else if (num1 !== '') {
+      num1 = num1.slice(0, -1);
+    }
+
+    updateDisplay();
   }
 
   function showFeedback(emoji) {
@@ -795,20 +926,18 @@
   }
 
   function checkSolution() {
-    if (slotValues.includes(null) || isProcessingAnswer) return;
+    if (num1 === '' || op === '' || num2 === '' || isProcessingAnswer) return;
 
     isProcessingAnswer = true;
-    document.querySelectorAll('.slot').forEach(s => s.classList.remove('active'));
 
-    const num1 = parseInt(slotValues[0]);
-    const op = slotValues[1];
-    const num2 = parseInt(slotValues[2]);
+    const n1 = parseInt(num1, 10);
+    const n2 = parseInt(num2, 10);
     let result = null;
 
-    if (op === '+') result = num1 + num2;
-    if (op === '-') result = num1 - num2;
-    if (op === '×') result = num1 * num2;
-    if (op === '÷') result = num2 !== 0 ? num1 / num2 : null;
+    if (op === '+') result = n1 + n2;
+    if (op === '-') result = n1 - n2;
+    if (op === '×') result = n1 * n2;
+    if (op === '÷') result = n2 !== 0 ? n1 / n2 : null;
 
     if (result === targetValue) {
       playSuccessSound();
@@ -822,6 +951,15 @@
       playErrorSound();
       showFeedback('😢');
 
+      const targetEl = document.getElementById('targetDisplay');
+      const originalTargetText = `= ${targetValue}`;
+      
+      targetEl.textContent = `= ${result} ❌`;
+      targetEl.style.color = '#d32f2f';
+
+      const middleSection = document.getElementById('middleSection');
+      middleSection.classList.add('shake');
+
       if (revealedTiles.length > 0) {
         const tileToHide = revealedTiles.pop();
         hiddenTiles.push(tileToHide);
@@ -829,23 +967,16 @@
         updatePartialNameDisplay();
       }
 
-      const middleSection = document.getElementById('middleSection');
-      middleSection.style.opacity = '0.3';
-
       setTimeout(() => {
-        middleSection.style.opacity = '1';
-        slotValues[0] = null;
-        slotValues[1] = null;
-        slotValues[2] = null;
+        targetEl.textContent = originalTargetText;
+        targetEl.style.color = '#0288d1';
+        middleSection.classList.remove('shake');
 
-        document.getElementById('slot0').textContent = '?';
-        document.getElementById('slot1').textContent = '?';
-        document.getElementById('slot2').textContent = '?';
+        resetEquationDisplay();
 
         isProcessingAnswer = false;
         renderStaticKeypad();
-        selectSlot(0, false);
-      }, 1500);
+      }, 2200);
     }
   }
 
@@ -861,22 +992,26 @@
 
     if (hiddenTiles.length === 0) {
       playVictoryTune();
+      playImageSound();
 
       document.getElementById('middleSection').style.display = 'none';
 
       const container = document.getElementById('keypadContainer');
       container.innerHTML = `
-        <button class="next-btn" onclick="nextRound()">... יופי טופי. הבא בתור</button>
+        <div class="victory-controls">
+          <button class="replay-btn" onclick="playImageSound()">🔊 השמע שוב</button>
+          <button class="next-btn" onclick="nextRound()">... יופי טופי. הבא בתור</button>
+        </div>
       `;
     } else {
       generateEquation();
       renderStaticKeypad();
-      selectSlot(0, false);
     }
   }
 
   function nextRound() {
     playClickSound();
+    stopImageSound();
     revealedImagesCount++;
     startRound();
   }
