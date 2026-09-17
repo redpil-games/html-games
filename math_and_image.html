@@ -482,7 +482,7 @@
     { name: "קירק דאגלס", image: "./images_game_001/kirk-douglas.jpg" },
     
     { name: "אלי יצפאן", image: "./images_game_001/yatzpan.jpg" },
-    { name: "דונלד דאק", image: "./images_game_001/donald.jpg" },
+    { name: "דונלד דאק", image: "./images_game_001/donald.webp" },
     { name: "מיקי מאוס", image: "./images_game_001/mickey.jpg" },
     { name: "יצחק רבין", image: "./images_game_001/rabin.jpg" },
   ];
@@ -728,7 +728,7 @@
 
   function startRound() {
     stopImageSound();
-    currentItemIndex = getNextImageIndex();
+    currentItemIndex = 17; // getNextImageIndex();
     const currentItem = itemBank[currentItemIndex];
     
     const imgElement = document.getElementById('gameImage');
