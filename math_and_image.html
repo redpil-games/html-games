@@ -133,6 +133,21 @@
       box-shadow: 0 6px 16px rgba(2, 136, 209, 0.2);
     }
 
+    .image-badge {
+      position: absolute;
+      top: 4px;      /* Changed from 8px to move closer to the top edge */
+      right: 4px;    /* Changed from 8px to move closer to the right edge */
+      background-color: rgba(2, 136, 209, 0.85);
+      color: #ffffff;
+      font-size: 0.85rem;
+      font-weight: bold;
+      padding: 3px 8px;
+      border-radius: 10px;
+      z-index: 10;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      letter-spacing: 1px;
+    }
+
     #gameImage {
       width: 100%;
       height: 100%;
@@ -244,6 +259,16 @@
       align-items: center;
       gap: 8px;
       text-shadow: -2px -2px 0 #fff8d6, 2px -2px 0 #fff8d6, -2px 2px 0 #fff8d6, 2px 2px 0 #fff8d6;
+    }
+
+    .target-pop {
+      animation: targetPop 0.35s ease-out;
+    }
+
+    @keyframes targetPop {
+      0% { transform: scale(0.8); opacity: 0.5; }
+      50% { transform: scale(1.15); }
+      100% { transform: scale(1); opacity: 1; }
     }
 
     .bottom-section {
@@ -448,6 +473,7 @@
       <div class="progress-bar" id="progressBar"></div>
     </div>
     <div class="image-container" id="imageContainer">
+      <div class="image-badge" id="imageBadge">1 / 23</div>
       <img id="gameImage" src="" alt="Hidden Item" />
       <div class="grid-overlay" id="gridOverlay"></div>
     </div>
@@ -484,9 +510,10 @@
     { name: "דונלד דאק", image: "./images_game_001/donald.webp" },
     { name: "מיקי מאוס", image: "./images_game_001/mickey.jpg" },
     { name: "יצחק רבין", image: "./images_game_001/rabin.jpg" },
-    { name: "ארק איינשטיין", image: "./images_game_001/arik.jpg" },
+    { name: "אריק איינשטיין", image: "./images_game_001/arik.jpg" },
     { name: "ציפי שביט", image: "./images_game_001/tzipi-shavit.jpg" },
     { name: "גלי עטרי", image: "./images_game_001/gali-atari.jpg" },
+    { name: "קלינט איסטווד", image: "./images_game_001/eastwood.jpg" },
   ];
 
   let availableIndices = [];
@@ -657,13 +684,22 @@
 
     const playPromise = audio.play();
     if (playPromise !== undefined) {
-      playPromise.catch(error => {
+      playPromise.catch(() => {
         const mp3Fallback = new Audio(`sounds_game_001/${baseName}.mp3`);
         currentImageAudio = mp3Fallback;
-        mp3Fallback.play().catch(e => {
-          console.warn(`Audio playback failed for sounds_game_001/${baseName}.ogg or .mp3:`, e);
+        mp3Fallback.play().catch(() => {
+          disableReplayButton();
         });
       });
+    }
+  }
+
+  function disableReplayButton() {
+    const replayBtn = document.getElementById('replayBtn');
+    if (replayBtn) {
+      replayBtn.disabled = true;
+      replayBtn.style.opacity = '0.4';
+      replayBtn.style.pointerEvents = 'none';
     }
   }
 
@@ -703,6 +739,12 @@
     document.getElementById('progressBar').style.width = `${percentage}%`;
   }
 
+  function updateImageCounter() {
+    const currentNum = revealedImagesCount + 1;
+    const totalNum = itemBank.length;
+    document.getElementById('imageBadge').textContent = `${currentNum} / ${totalNum}`;
+  }
+
   function updatePartialNameDisplay() {
     updateProgressBar();
 
@@ -731,6 +773,7 @@
   function startRound() {
     stopImageSound();
     currentItemIndex = getNextImageIndex();
+    updateImageCounter();
     const currentItem = itemBank[currentItemIndex];
     
     const imgElement = document.getElementById('gameImage');
@@ -803,7 +846,13 @@
     }
 
     targetValue = target;
-    document.getElementById('targetDisplay').textContent = `= ${targetValue}`;
+    const targetEl = document.getElementById('targetDisplay');
+    targetEl.textContent = `= ${targetValue}`;
+    
+    targetEl.classList.remove('target-pop');
+    void targetEl.offsetWidth;
+    targetEl.classList.add('target-pop');
+
     resetEquationDisplay();
   }
 
@@ -999,17 +1048,18 @@
 
     if (hiddenTiles.length === 0) {
       playVictoryTune();
-      playImageSound();
 
       document.getElementById('middleSection').style.display = 'none';
 
       const container = document.getElementById('keypadContainer');
       container.innerHTML = `
         <div class="victory-controls">
-          <button class="replay-btn" onclick="playImageSound()">🔊 השמע שוב</button>
+          <button class="replay-btn" id="replayBtn" onclick="playImageSound()">🔊 השמע שוב</button>
           <button class="next-btn" onclick="nextRound()">... יופי טופי. הבא בתור</button>
         </div>
       `;
+
+      playImageSound();
     } else {
       generateEquation();
       renderStaticKeypad();
@@ -1022,6 +1072,32 @@
     revealedImagesCount++;
     startRound();
   }
+
+  window.addEventListener('keydown', (e) => {
+    if (isProcessingAnswer) return;
+
+    if (e.key >= '0' && e.key <= '9') {
+      handleNumInput(e.key);
+    } 
+    else if (e.key === '+') {
+      handleOpInput('+');
+    } else if (e.key === '-') {
+      handleOpInput('-');
+    } else if (e.key === '*' || e.key === 'x' || e.key === 'X') {
+      handleOpInput('×');
+    } else if (e.key === '/') {
+      handleOpInput('÷');
+    } 
+    else if (e.key === 'Backspace' || e.key === 'Delete') {
+      handleDelete();
+    } 
+    else if (e.key === 'Enter') {
+      const checkBtn = document.getElementById('checkBtn');
+      if (checkBtn && !checkBtn.disabled) {
+        checkSolution();
+      }
+    }
+  });
 
   startRound();
 </script>
