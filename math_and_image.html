@@ -66,24 +66,31 @@
       width: 100%;
       display: flex;
       justify-content: flex-end;
+      align-items: center;
+      gap: 8px;
       position: absolute;
       top: 10px;
       right: 12px;
       z-index: 10;
     }
 
-    .mute-btn {
+    .header-btn {
       background: #ffffff;
       border: 2px solid #0288d1;
       border-radius: 50%;
       width: 40px;
       height: 40px;
-      font-size: 1.2rem;
+      font-size: 1.1rem;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+      transition: transform 0.1s ease;
+    }
+
+    .header-btn:active {
+      transform: scale(0.92);
     }
 
     .top-section, .middle-section, .bottom-section {
@@ -135,8 +142,8 @@
 
     .image-badge {
       position: absolute;
-      top: 4px;      /* Changed from 8px to move closer to the top edge */
-      right: 4px;    /* Changed from 8px to move closer to the right edge */
+      top: 4px;
+      right: 4px;
       background-color: rgba(2, 136, 209, 0.85);
       color: #ffffff;
       font-size: 0.85rem;
@@ -465,7 +472,8 @@
 
 <div id="app">
   <div class="header-bar">
-    <button class="mute-btn" id="muteBtn" onclick="toggleMute()">🔊</button>
+    <button class="header-btn" id="skipBtn" onclick="skipImage()" title="Skip">⏭️</button>
+    <button class="header-btn" id="muteBtn" onclick="toggleMute()">🔊</button>
   </div>
 
   <div class="top-section">
@@ -473,7 +481,7 @@
       <div class="progress-bar" id="progressBar"></div>
     </div>
     <div class="image-container" id="imageContainer">
-      <div class="image-badge" id="imageBadge">1 / 23</div>
+      <div class="image-badge" id="imageBadge">1 / 25</div>
       <img id="gameImage" src="" alt="Hidden Item" />
       <div class="grid-overlay" id="gridOverlay"></div>
     </div>
@@ -515,6 +523,7 @@
     { name: "גלי עטרי", image: "./images_game_001/gali-atari.jpg" },
     { name: "קלינט איסטווד", image: "./images_game_001/eastwood.jpg" },
     { name: "דאלאס", image: "./images_game_001/dallas.jpg" },
+    { name: "כלב ים", image: "./images_game_001/dog-sea.jpg" },
   ];
 
   let availableIndices = [];
@@ -769,6 +778,12 @@
     const hiddenPart = '.'.repeat(totalChars - charsToShowCount);
 
     document.getElementById('itemName').textContent = visiblePart + hiddenPart;
+  }
+
+  function skipImage() {
+    playClickSound();
+    isProcessingAnswer = false;
+    startRound();
   }
 
   function startRound() {
@@ -1056,7 +1071,7 @@
       container.innerHTML = `
         <div class="victory-controls">
           <button class="replay-btn" id="replayBtn" onclick="playImageSound()">🔊 השמע שוב</button>
-          <button class="next-btn" onclick="nextRound()">... יופי טופי. הבא בתור</button>
+          <button class="next-btn" onclick="nextRound()">לתמונה הבאה ➔</button>
         </div>
       `;
 
@@ -1068,37 +1083,9 @@
   }
 
   function nextRound() {
-    playClickSound();
-    stopImageSound();
     revealedImagesCount++;
     startRound();
   }
-
-  window.addEventListener('keydown', (e) => {
-    if (isProcessingAnswer) return;
-
-    if (e.key >= '0' && e.key <= '9') {
-      handleNumInput(e.key);
-    } 
-    else if (e.key === '+') {
-      handleOpInput('+');
-    } else if (e.key === '-') {
-      handleOpInput('-');
-    } else if (e.key === '*' || e.key === 'x' || e.key === 'X') {
-      handleOpInput('×');
-    } else if (e.key === '/') {
-      handleOpInput('÷');
-    } 
-    else if (e.key === 'Backspace' || e.key === 'Delete') {
-      handleDelete();
-    } 
-    else if (e.key === 'Enter') {
-      const checkBtn = document.getElementById('checkBtn');
-      if (checkBtn && !checkBtn.disabled) {
-        checkSolution();
-      }
-    }
-  });
 
   startRound();
 </script>
