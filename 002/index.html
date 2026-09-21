@@ -94,16 +94,16 @@
         }
 
         /* Item Tray Layout */
-        .item-tray {
-            width: 150px; /* Slight increase to comfortably fit the spacing */
-            background-color: #25252b;
-            border-left: 2px solid #3f3f4e;
-            display: flex;
-            flex-direction: column;
-            padding: 10px;
-            gap: 10px;
-            margin-right: 15px; /* Adds space between the list and the right edge of the screen */
-        }
+/* Item Tray Layout */
+.item-tray {
+    width: 160px; /* Increased width to give cards plenty of breathing room */
+    background-color: #25252b;
+    border-left: 2px solid #3f3f4e;
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    gap: 10px;
+}
 
         .item-tray h2 {
             font-size: 0.75rem;
@@ -115,26 +115,27 @@
             padding-bottom: 6px;
         }
 
-        .items-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 12px;
-            overflow-y: auto;
-            padding-right: 12px; /* Creates internal space between thumbnails and scrollbar */
-            margin-right: 4px;   /* Fine-tune distance from the scrollbar track */
-        }
+.items-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    overflow-y: auto;   /* Keep vertical scrollbar active */
+    overflow-x: hidden; /* Hard-disable horizontal overflow */
+    padding-right: 8px; /* Room for vertical scrollbar without squeezing cards */
+}
 
-        .item-card {
-            background-color: #32323c;
-            border: 2px solid #444452;
-            border-radius: 8px;
-            padding: 6px 4px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 6px;
-            transition: transform 0.2s, border-color 0.2s, background-color 0.3s, box-shadow 0.3s;
-        }
+.item-card {
+    width: 100%; /* Adapt cleanly to container width */
+    background-color: #32323c;
+    border: 2px solid #444452;
+    border-radius: 8px;
+    padding: 8px 4px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    transition: transform 0.2s, border-color 0.2s, background-color 0.3s, box-shadow 0.3s;
+}
 
         /* Highlight state when an item is found */
         .item-card.highlight {
@@ -227,7 +228,7 @@
                 "title": "The Detective's Desk",
                 "width": 1920,
                 "height": 1080,
-                "imagePath": "./images/001_001.jpg"
+                "imagePath": "images/001_001.jpg"
             },
             "items": [
                 {
