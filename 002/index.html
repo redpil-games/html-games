@@ -1,1 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Detective Hidden Object Game</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+        }
 
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #1a1a1d;
+            color: #ffffff;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Header Bar */
+        header {
+            height: 50px;
+            background-color: #2c2c34;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            border-bottom: 2px solid #3f3f4e;
+        }
+
+        header h1 {
+            font-size: 1.2rem;
+            color: #e0e0e0;
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .btn {
+            background-color: #4a4e69;
+            color: #fff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+
+        .btn:hover {
+            background-color: #6b705c;
+        }
+
+        .btn:disabled {
+            background-color: #333;
+            color: #777;
+            cursor: not-allowed;
+        }
+
+        /* Main Game Layout */
+        .game-container {
+            flex: 1;
+            display: flex;
+            flex-direction: row;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Scene Viewport */
+        .scene-container {
+            flex: 1;
+            position: relative;
+            background-color: #0d0d0f;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        #game-canvas {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            cursor: crosshair;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
+        }
+
+        /* Item Tray Layout */
+        .item-tray {
+            width: 150px; /* Slight increase to comfortably fit the spacing */
+            background-color: #25252b;
+            border-left: 2px solid #3f3f4e;
+            display: flex;
+            flex-direction: column;
+            padding: 10px;
+            gap: 10px;
+            margin-right: 15px; /* Adds space between the list and the right edge of the screen */
+        }
+
+        .item-tray h2 {
+            font-size: 0.75rem;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #a0a0b0;
+            border-bottom: 1px solid #3f3f4e;
+            padding-bottom: 6px;
+        }
+
+        .items-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            overflow-y: auto;
+            padding-right: 12px; /* Creates internal space between thumbnails and scrollbar */
+            margin-right: 4px;   /* Fine-tune distance from the scrollbar track */
+        }
+
+        .item-card {
+            background-color: #32323c;
+            border: 2px solid #444452;
+            border-radius: 8px;
+            padding: 6px 4px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            transition: transform 0.2s, border-color 0.2s, background-color 0.3s, box-shadow 0.3s;
+        }
+
+        /* Highlight state when an item is found */
+        .item-card.highlight {
+            border-color: #2a9d8f;
+            background-color: #1e3a38;
+            box-shadow: 0 0 12px #2a9d8f;
+        }
+
+        .item-card.found {
+            opacity: 0.3;
+            border-color: #2a9d8f;
+            text-decoration: line-through;
+        }
+
+        .item-card img {
+            width: 90px;
+            height: 90px;
+            object-fit: contain;
+            background-color: #1a1a1d;
+            border-radius: 6px;
+            flex-shrink: 0;
+        }
+
+        .item-card span {
+            font-size: 0.75rem;
+            text-align: center;
+            color: #d0d0d0;
+        }
+
+        /* Responsive Layout Switch for Small Displays / Phones */
+        @media (max-width: 768px) {
+            .game-container {
+                flex-direction: column;
+            }
+
+            .item-tray {
+                width: 100%;
+                height: 120px;
+                border-left: none;
+                border-top: 2px solid #3f3f4e;
+                padding: 10px;
+            }
+
+            .items-grid {
+                display: flex;
+                flex-direction: row;
+                overflow-x: auto;
+                padding-right: 0;   /* Reset vertical desktop padding */
+                margin-right: 0;    /* Reset vertical desktop margin */
+                padding-bottom: 8px; /* Adds space between thumbnails and horizontal scrollbar */
+                gap: 12px;
+            }
+
+            .item-card {
+                min-width: 90px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header UI -->
+    <header>
+        <h1 id="scene-title">Detective Scene</h1>
+        <div class="header-controls">
+            <span id="score-tracker">Found: 0 / 0</span>
+            <button id="hint-btn" class="btn">Hint</button>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <div class="game-container">
+        <!-- Interactive Canvas Viewport -->
+        <div class="scene-container">
+            <canvas id="game-canvas"></canvas>
+        </div>
+
+        <!-- Target Item List Panel -->
+        <div class="item-tray">
+            <h2>Items to Find</h2>
+            <div id="items-grid" class="items-grid"></div>
+        </div>
+    </div>
+
+    <script>
+        // --- 1. GAME DATA DEFINITION ---
+        const levelData = {
+            "scene": {
+                "id": "detective_office_01",
+                "title": "The Detective's Desk",
+                "width": 1920,
+                "height": 1080,
+                "imagePath": "images/001_001.jpg"
+            },
+            "items": [
+                {
+                    "id": "001_001",
+                    "name": "מיצי",
+                    "thumbnailPath": "images/thumb_001.png",
+                    "found": false,
+                    "shape": "rect",
+                    "bounds": { "x": 1110, "y": 234, "width": 70, "height": 50 }
+                },
+                {
+                    "id": "001_002",
+                    "name": "מיצי",
+                    "thumbnailPath": "images/thumb_002.png",
+                    "found": false,
+                    "shape": "rect",
+                    "bounds": { "x": 960, "y": 710, "width": 50, "height": 70 }
+                },
+                {
+                    "id": "001_003",
+                    "name": "מיצי",
+                    "thumbnailPath": "images/thumb_003.png",
+                    "found": false,
+                    "shape": "rect",
+                    "bounds": { "x": 1760, "y": 810, "width": 90, "height": 80 }
+                },
+                {
+                    "id": "001_004",
+                    "name": "פרפר",
+                    "thumbnailPath": "images/thumb_004.png",
+                    "found": false,
+                    "shape": "rect",
+                    "bounds": { "x": 1120, "y": 950, "width": 40, "height": 50 } 
+                },
+                {
+                    "id": "001_005",
+                    "name": "טופי",
+                    "thumbnailPath": "images/thumb_005.png",
+                    "found": false,
+                    "shape": "rect",
+                    "bounds": { "x": 800, "y": 890, "width": 110, "height": 120 }
+                },
+                {
+                    "id": "001_006",
+                    "name": "ציפורה",
+                    "thumbnailPath": "images/thumb_006.png",
+                    "found": false,
+                    "shape": "rect",
+                    "bounds": { "x": 245, "y": 15, "width": 30, "height": 30 }
+                },
+                {
+                    "id": "001_007",
+                    "name": "ציפורה",
+                    "thumbnailPath": "images/thumb_006.png",
+                    "found": false,
+                    "shape": "rect",
+                    "bounds": { "x": 290, "y": 925, "width": 40, "height": 50 }
+                },
+                {
+                    "id": "001_008",
+                    "name": "פיל",
+                    "thumbnailPath": "images/thumb_008.png",
+                    "found": false,
+                    "shape": "rect",
+                    "bounds": { "x": 1655, "y": 480, "width": 120, "height": 105 }
+                },
+                {
+                    "id": "001_009",
+                    "name": "עב\"ם",
+                    "thumbnailPath": "images/thumb_009.png",
+                    "found": false,
+                    "shape": "rect",
+                    "bounds": { "x": 1475, "y": 75, "width": 115, "height": 70 }
+                }
+            ]
+        };
+
+        // --- 2. GAME STATE & CANVAS SETUP ---
+        const canvas = document.getElementById('game-canvas');
+        const ctx = canvas.getContext('2d');
+        
+        const sceneTitleEl = document.getElementById('scene-title');
+        const scoreTrackerEl = document.getElementById('score-tracker');
+        const itemsGridEl = document.getElementById('items-grid');
+        const hintBtn = document.getElementById('hint-btn');
+
+        let bgImage = new Image();
+        let itemsFoundCount = 0;
+        let activeRipples = []; // Active touch effect feedback animations
+
+        // Initialize Level
+        function initGame() {
+            sceneTitleEl.textContent = levelData.scene.title;
+            
+            canvas.width = levelData.scene.width;
+            canvas.height = levelData.scene.height;
+
+            bgImage.onload = () => {
+                startRenderLoop();
+            };
+            
+            bgImage.onerror = () => {
+                console.error("Failed to load image at path:", levelData.scene.imagePath);
+                startRenderLoop();
+            };
+
+            bgImage.src = levelData.scene.imagePath;
+
+            if (bgImage.complete && bgImage.naturalWidth !== 0) {
+                startRenderLoop();
+            }
+
+            renderItemTray();
+            updateScore();
+        }
+
+        // Continuous Animation Loop
+        function startRenderLoop() {
+            function render() {
+                drawScene();
+
+                // If the player is holding their press down, emit repeating pulses every few frames
+                if (isPointerDown && activePressPoint) {
+                    activePressTimer++;
+                    if (activePressTimer % 50 === 0) { // Emits a subtle pulse every 12 frames while held
+                        addTouchFeedback(activePressPoint.x, activePressPoint.y, false);
+                    }
+                }
+
+                drawRipples();
+                requestAnimationFrame(render);
+            }
+            requestAnimationFrame(render);
+        }
+
+        // --- 3. RENDERING LOGIC ---
+        function drawScene() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            if (bgImage.complete && bgImage.naturalWidth !== 0) {
+                ctx.drawImage(bgImage, 0, 0, canvas.width, canvas.height);
+            } else {
+                drawPlaceholderScene();
+            }
+        }
+
+        function drawPlaceholderScene() {
+            ctx.fillStyle = "#2a2a35";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = "#555";
+            ctx.font = "36px sans-serif";
+            ctx.textAlign = "center";
+            ctx.fillText("Main Scene Artwork Placeholder (1920x1080)", canvas.width / 2, canvas.height / 2);
+
+            // Draw target zones for visual testing
+            levelData.items.forEach(item => {
+                if (!item.found) {
+                    ctx.strokeStyle = "rgba(255, 255, 0, 0.4)";
+                    ctx.lineWidth = 3;
+                    if (item.shape === "rect") {
+                        ctx.strokeRect(item.bounds.x, item.bounds.y, item.bounds.width, item.bounds.height);
+                    } else if (item.shape === "polygon") {
+                        ctx.beginPath();
+                        item.coordinates.forEach(([x, y], idx) => {
+                            if (idx === 0) ctx.moveTo(x, y);
+                            else ctx.lineTo(x, y);
+                        });
+                        ctx.closePath();
+                        ctx.stroke();
+                    }
+                }
+            });
+        }
+
+        // --- 4. TOUCH FEEDBACK EFFECT LOGIC ---
+        function addTouchFeedback(x, y, isHit) {
+            activeRipples.push({
+                x: x,
+                y: y,
+                radius: 12,
+                maxRadius: isHit ? 55 : 38,
+                alpha: 0.9,
+                color: isHit ? '#2a9d8f' : '#ffffff', // Green on hit, crisp white on miss
+                lineWidth: isHit ? 4 : 2
+            });
+        }
+
+        function drawRipples() {
+            for (let i = activeRipples.length - 1; i >= 0; i--) {
+                const ripple = activeRipples[i];
+
+                ctx.save();
+                ctx.beginPath();
+                ctx.arc(ripple.x, ripple.y, ripple.radius, 0, Math.PI * 2);
+                ctx.strokeStyle = ripple.color;
+                ctx.globalAlpha = Math.max(0, ripple.alpha);
+                ctx.lineWidth = ripple.lineWidth;
+                ctx.stroke();
+                ctx.restore();
+
+                // Expand radius and fade out opacity
+                ripple.radius += (ripple.maxRadius - ripple.radius) * 0.15 + 1;
+                ripple.alpha -= 0.04;
+
+                // Remove expired ripple frames
+                if (ripple.alpha <= 0) {
+                    activeRipples.splice(i, 1);
+                }
+            }
+        }
+
+        function renderItemTray() {
+            itemsGridEl.innerHTML = '';
+            
+            // Filter to show only items that have NOT been found yet
+            const remainingItems = levelData.items.filter(item => !item.found);
+
+            remainingItems.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'item-card';
+                card.id = `card-${item.id}`;
+
+                const img = document.createElement('img');
+                img.src = item.thumbnailPath;
+                img.onerror = () => {
+                    img.src = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='90' height='90'><rect width='90' height='90' fill='%23444'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' fill='%23fff' font-size='12'>Item</text></svg>";
+                };
+
+                const name = document.createElement('span');
+                name.textContent = item.name;
+
+                card.appendChild(img);
+                card.appendChild(name);
+                itemsGridEl.appendChild(card);
+            });
+        }
+
+        function updateScore() {
+            scoreTrackerEl.textContent = `Found: ${itemsFoundCount} / ${levelData.items.length}`;
+        }
+
+        // --- 5. INTERACTION & CLICK DETECTING ---
+        let isPointerDown = false;
+        let activePressPoint = null;
+        let activePressTimer = 0;
+
+        // Trigger instantly as soon as touch or mouse presses down
+        canvas.addEventListener('pointerdown', (e) => {
+            isPointerDown = true;
+            
+            const { clickX, clickY } = getCanvasCoords(e);
+            activePressPoint = { x: clickX, y: clickY };
+            activePressTimer = 0;
+
+            // Evaluate hit logic immediately on press down
+            checkItemHit(clickX, clickY);
+        });
+
+        // Track when press releases or moves off canvas
+        window.addEventListener('pointerup', () => {
+            isPointerDown = false;
+            activePressPoint = null;
+        });
+
+        window.addEventListener('pointercancel', () => {
+            isPointerDown = false;
+            activePressPoint = null;
+        });
+
+        // Utility helper to map touch/mouse coordinates to native canvas dimensions
+        function getCanvasCoords(e) {
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+
+            return {
+                clickX: (e.clientX - rect.left) * scaleX,
+                clickY: (e.clientY - rect.top) * scaleY
+            };
+        }
+
+        function checkItemHit(x, y) {
+            let itemFoundInClick = false;
+
+            levelData.items.forEach(item => {
+                if (item.found || itemFoundInClick) return;
+
+                let isHit = false;
+
+                if (item.shape === "rect") {
+                    const { x: rx, y: ry, width: rw, height: rh } = item.bounds;
+                    if (x >= rx && x <= rx + rw && y >= ry && y <= ry + rh) {
+                        isHit = true;
+                    }
+                } else if (item.shape === "polygon") {
+                    isHit = pointInPolygon([x, y], item.coordinates);
+                }
+
+                if (isHit) {
+                    item.found = true;
+                    itemsFoundCount++;
+                    itemFoundInClick = true;
+                    updateScore();
+
+                    // 2-Second Highlight Effect Logic with Auto-Scroll
+                    const foundCard = document.getElementById(`card-${item.id}`);
+                    if (foundCard) {
+                        // Step 1: Smoothly scroll the card into view inside the tray
+                        foundCard.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'nearest',   // For vertical desktop tray
+                            inline: 'nearest'  // For horizontal mobile tray
+                        });
+
+                        // Step 2: Apply the glowing color highlight styling
+                        foundCard.classList.add('highlight');
+
+                        // Step 3: Wait 2 seconds before starting the fade-out transition
+                        setTimeout(() => {
+                            foundCard.style.transition = 'all 0.5s ease';
+                            foundCard.style.opacity = '0';
+                            foundCard.style.transform = 'scale(0.8)';
+                            
+                            // Step 4: Remove the card from the UI tray after the fade completes
+                            setTimeout(() => { 
+                                renderItemTray(); 
+                            }, 500);
+                        }, 2000); // 2000ms highlight duration
+                    } else {
+                        renderItemTray();
+                    }
+                }
+            });
+
+            // Play corresponding SFX
+            if (itemFoundInClick) {
+                playSFX('hit');
+            } else {
+                playSFX('miss');
+            }
+
+            // Trigger visual touch feedback ripple
+            addTouchFeedback(x, y, itemFoundInClick);
+        }
+        
+        // Ray casting algorithm for polygon bounds
+        function pointInPolygon(point, vs) {
+            const x = point[0], y = point[1];
+            let inside = false;
+            for (let i = 0, j = vs.length - 1; i < vs.length; j = i++) {
+                const xi = vs[i][0], yi = vs[i][1];
+                const xj = vs[j][0], yj = vs[j][1];
+                const intersect = ((yi > y) !== (yj > y)) && (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+                if (intersect) inside = !inside;
+            }
+            return inside;
+        }
+
+        // --- 6. AUDIO SYNTHESIZER ENGINE ---
+        let audioCtx = null;
+
+        // Helper to ensure AudioContext is initialized and unlocked on user gesture
+        function unlockAudioContext() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        function playSFX(type) {
+            // 1. Always ensure audio context is awake
+            unlockAudioContext();
+
+            const now = audioCtx.currentTime;
+
+            if (type === 'miss') {
+                // Clear, tactile "pop/thud" crisp enough for all mobile & desktop speakers
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+
+                osc.type = 'triangle';
+                
+                // Start at 420Hz and quickly drop to 120Hz over 60ms
+                osc.frequency.setValueAtTime(420, now);
+                osc.frequency.exponentialRampToValueAtTime(120, now + 0.06);
+
+                // Sharp attack, fast decay
+                gain.gain.setValueAtTime(0.35, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.06);
+
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                osc.start(now);
+                osc.stop(now + 0.06);
+
+            } else if (type === 'hit') {
+                // Bright, rewarding two-tone victory chime
+                const playTone = (freq, startOffset, duration) => {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(freq, now + startOffset);
+
+                    gain.gain.setValueAtTime(0.3, now + startOffset);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + startOffset + duration);
+
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+
+                    osc.start(now + startOffset);
+                    osc.stop(now + startOffset + duration);
+                };
+
+                // Two harmonizing notes: C6 (1046.5Hz) followed by E6 (1318.5Hz)
+                playTone(1046.5, 0.0, 0.15);
+                playTone(1318.5, 0.08, 0.25);
+            }
+        }
+
+        // Ensure audio context unlocks on initial user interaction anywhere on screen
+        window.addEventListener('pointerdown', unlockAudioContext, { once: true });
+
+        // Initialize game on load
+        initGame();
+    </script>
+</body>
+</html>
